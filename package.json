@@ -1,0 +1,22 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "@coreui/coreui": "^3.2.2",
+        "@coreui/icons": "^1.0.1",
+        "autoprefixer": "^10.3.1",
+        "axios": "^0.21",
+        "bootstrap": "^4.1.0",
+        "laravel-mix": "^6.0.6",
+        "popper.js": "^1.12",
+        "sass": "^1.15.2",
+        "sass-loader": "^12.1.0"
+    }
+}
