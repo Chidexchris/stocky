@@ -49,7 +49,7 @@ class SalesReturnController extends Controller
             $sale_return = SaleReturn::create([
                 'date' => $request->date,
                 'customer_id' => $request->customer_id,
-                'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
+                'customer_name' => $request->customer_id ? Customer::findOrFail($request->customer_id)->customer_name : 'Walk-in Customer',
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount * 100,
@@ -109,7 +109,7 @@ class SalesReturnController extends Controller
     public function show(SaleReturn $sale_return) {
         abort_if(Gate::denies('show_sale_returns'), 403);
 
-        $customer = Customer::findOrFail($sale_return->customer_id);
+        $customer = $sale_return->customer_id ? Customer::find($sale_return->customer_id) : null;
 
         return view('salesreturn::show', compact('sale_return', 'customer'));
     }
@@ -173,7 +173,7 @@ class SalesReturnController extends Controller
                 'date' => $request->date,
                 'reference' => $request->reference,
                 'customer_id' => $request->customer_id,
-                'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
+                'customer_name' => $request->customer_id ? Customer::findOrFail($request->customer_id)->customer_name : 'Walk-in Customer',
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount * 100,

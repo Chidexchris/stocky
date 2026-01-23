@@ -10,7 +10,10 @@ use Modules\Product\Entities\Product;
 class ProductCart extends Component
 {
 
-    public $listeners = ['productSelected', 'discountModalRefresh'];
+    protected $listeners = [
+        'productSelected' => 'productSelected',
+        'discountModalRefresh' => 'discountModalRefresh'
+    ];
 
     public $cart_instance;
     public $global_discount;

@@ -8,7 +8,10 @@ use Livewire\Component;
 class Checkout extends Component
 {
 
-    public $listeners = ['productSelected', 'discountModalRefresh'];
+    protected $listeners = [
+        'productSelected' => 'productSelected',
+        'discountModalRefresh' => 'discountModalRefresh'
+    ];
 
     public $cart_instance;
     public $customers;
@@ -49,11 +52,7 @@ class Checkout extends Component
     }
 
     public function proceed() {
-        if ($this->customer_id != null) {
-            $this->dispatch('showCheckoutModal');
-        } else {
-            session()->flash('message', 'Please Select Customer!');
-        }
+        $this->dispatch('showCheckoutModal');
     }
 
     public function calculateTotal() {

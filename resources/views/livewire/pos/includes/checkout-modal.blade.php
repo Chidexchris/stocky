@@ -32,13 +32,13 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="total_amount">Total Amount <span class="text-danger">*</span></label>
-                                        <input id="total_amount" type="text" class="form-control" name="total_amount" value="{{ $total_amount }}" readonly required>
+                                        <input id="total_amount" type="text" class="form-control" name="total_amount" value="{{ Cart::instance($cart_instance)->total() + (float) $shipping }}" readonly required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="paid_amount">Received Amount <span class="text-danger">*</span></label>
-                                        <input id="paid_amount" type="text" class="form-control" name="paid_amount" value="{{ $total_amount }}" required>
+                                        <input id="paid_amount" type="text" class="form-control" name="paid_amount" value="{{ Cart::instance($cart_instance)->total() + (float) $shipping }}" required>
                                     </div>
                                 </div>
                             </div>

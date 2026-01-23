@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Modules\Upload\Entities\Upload;
+use App\Notifications\AccountFrozenNotification;
+use App\Notifications\AccountUnfrozenNotification;
 
 class UsersController extends Controller
 {
@@ -115,5 +117,21 @@ class UsersController extends Controller
         toast('User Deleted!', 'warning');
 
         return redirect()->route('users.index');
+    }
+
+    public function freeze(User $user) {
+        abort_if(Gate::denies('access_user_management'), 403);
+        $user->update(['is_active' => 0]);
+        $user->notify(new AccountFrozenNotification());
+        toast('User account frozen', 'warning');
+        return back();
+    }
+
+    public function unfreeze(User $user) {
+        abort_if(Gate::denies('access_user_management'), 403);
+        $user->update(['is_active' => 1]);
+        $user->notify(new AccountUnfrozenNotification());
+        toast('User account unfrozen', 'success');
+        return back();
     }
 }

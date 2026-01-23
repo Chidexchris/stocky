@@ -1,3 +1,6 @@
+ 
+
+ 
 <li class="c-sidebar-nav-item {{ request()->routeIs('home') ? 'c-active' : '' }}">
     <a class="c-sidebar-nav-link" href="{{ route('home') }}">
         <i class="c-sidebar-nav-icon bi bi-house" style="line-height: 1;"></i> Home
@@ -61,6 +64,7 @@
         </ul>
     </li>
 @endcan
+ 
 
 @can('access_quotations')
     <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('quotations.*') ? 'c-show' : '' }}">
@@ -279,6 +283,11 @@
             <i class="c-sidebar-nav-icon bi bi-people" style="line-height: 1;"></i> User Management
         </a>
         <ul class="c-sidebar-nav-dropdown-items">
+            <!-- <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link {{ request()->routeIs('admin.dashboard') ? 'c-active' : '' }}" href="{{ route('admin.dashboard') }}">
+                    <i class="c-sidebar-nav-icon bi bi-speedometer2" style="line-height: 1;"></i> Admin Dashboard
+                </a>
+            </li> -->
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('users.create') ? 'c-active' : '' }}" href="{{ route('users.create') }}">
                     <i class="c-sidebar-nav-icon bi bi-person-plus" style="line-height: 1;"></i> Create User

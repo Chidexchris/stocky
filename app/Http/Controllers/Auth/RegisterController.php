@@ -71,7 +71,7 @@ class RegisterController extends Controller
             'is_active' => 1
         ]);
 
-        $user->assignRole('Admin');
+        $user->assignRole('Super Admin');
 
         return $user;
     }

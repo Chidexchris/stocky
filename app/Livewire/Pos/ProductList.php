@@ -46,6 +46,6 @@ class ProductList extends Component
     }
 
     public function selectProduct($product) {
-        $this->dispatch('productSelected', $product);
+        $this->dispatch('productSelected', $product)->to(\App\Livewire\Pos\Checkout::class);
     }
 }

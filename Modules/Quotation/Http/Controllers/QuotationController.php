@@ -39,7 +39,7 @@ class QuotationController extends Controller
             $quotation = Quotation::create([
                 'date' => $request->date,
                 'customer_id' => $request->customer_id,
-                'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
+                'customer_name' => $request->customer_id ? Customer::findOrFail($request->customer_id)->customer_name : 'Walk-in Customer',
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount * 100,
@@ -78,7 +78,7 @@ class QuotationController extends Controller
     public function show(Quotation $quotation) {
         abort_if(Gate::denies('show_quotations'), 403);
 
-        $customer = Customer::findOrFail($quotation->customer_id);
+        $customer = $quotation->customer_id ? Customer::find($quotation->customer_id) : null;
 
         return view('quotation::show', compact('quotation', 'customer'));
     }
@@ -126,7 +126,7 @@ class QuotationController extends Controller
                 'date' => $request->date,
                 'reference' => $request->reference,
                 'customer_id' => $request->customer_id,
-                'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
+                'customer_name' => $request->customer_id ? Customer::findOrFail($request->customer_id)->customer_name : 'Walk-in Customer',
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount * 100,

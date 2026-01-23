@@ -41,6 +41,8 @@ class SearchProduct extends Component
     }
 
     public function selectProduct($product) {
-        $this->dispatch('productSelected', $product);
+        $this->dispatch('productSelected', $product)->to(\App\Livewire\ProductCart::class);
+        $this->dispatch('productSelected', $product)->to(\App\Livewire\Adjustment\ProductTable::class);
+        $this->dispatch('productSelected', $product)->to(\App\Livewire\Barcode\ProductTable::class);
     }
 }

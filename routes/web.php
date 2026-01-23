@@ -19,6 +19,13 @@ Route::get('/', function () {
 
 Auth::routes(['register' => false]);
 
+// User Registration (explicitly enabled)
+Route::get('/register', 'Auth\RegisterController@showRegistrationForm')
+    ->name('register')
+    ->middleware('guest');
+Route::post('/register', 'Auth\RegisterController@register')
+    ->middleware('guest');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')
         ->name('home');
@@ -33,3 +40,6 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('payment-flow.chart');
 });
 
+Route::group(['middleware' => ['auth', 'role:Super Admin']], function () {
+    Route::get('/admin', 'Admin\DashboardController@index')->name('admin.dashboard');
+});

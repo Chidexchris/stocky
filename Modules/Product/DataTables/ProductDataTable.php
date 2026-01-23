@@ -15,7 +15,7 @@ class ProductDataTable extends DataTable
     public function dataTable($query)
     {
         return datatables()
-            ->eloquent($query)->with('category')
+            ->eloquent($query)
             ->addColumn('action', function ($data) {
                 return view('product::products.partials.actions', compact('data'));
             })

@@ -49,7 +49,7 @@ class SaleController extends Controller
             $sale = Sale::create([
                 'date' => $request->date,
                 'customer_id' => $request->customer_id,
-                'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
+                'customer_name' => $request->customer_id ? Customer::findOrFail($request->customer_id)->customer_name : 'Walk-in Customer',
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount * 100,
@@ -109,7 +109,7 @@ class SaleController extends Controller
     public function show(Sale $sale) {
         abort_if(Gate::denies('show_sales'), 403);
 
-        $customer = Customer::findOrFail($sale->customer_id);
+        $customer = $sale->customer_id ? Customer::find($sale->customer_id) : null;
 
         return view('sale::show', compact('sale', 'customer'));
     }
@@ -174,7 +174,7 @@ class SaleController extends Controller
                 'date' => $request->date,
                 'reference' => $request->reference,
                 'customer_id' => $request->customer_id,
-                'customer_name' => Customer::findOrFail($request->customer_id)->customer_name,
+                'customer_name' => $request->customer_id ? Customer::findOrFail($request->customer_id)->customer_name : 'Walk-in Customer',
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount * 100,

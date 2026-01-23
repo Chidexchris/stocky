@@ -15,8 +15,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Users
     Route::resource('users', 'UsersController')->except('show');
+    Route::patch('users/{user}/freeze', 'UsersController@freeze')->name('users.freeze');
+    Route::patch('users/{user}/unfreeze', 'UsersController@unfreeze')->name('users.unfreeze');
 
     //Roles
     Route::resource('roles', 'RolesController')->except('show');
 
+});
+
+Route::group(['middleware' => ['auth', 'role:Super Admin'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::resource('users', 'UsersController')->except('show');
+    Route::resource('roles', 'RolesController')->except('show');
 });

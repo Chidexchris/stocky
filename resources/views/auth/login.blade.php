@@ -10,12 +10,10 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
-<body class="bg-gradient-to-r from-blue-600 to-indigo-700 min-h-screen flex items-center justify-center">
+<body class=" to-indigo-700 min-h-screen flex items-center justify-center">
 
 <div class="w-full max-w-md mx-auto">
-    <div class="flex justify-center mb-8">
-        <img class="w-40" src="{{ asset('images/logo_dark.png') }}" alt="Logo">
-    </div>
+    
 
     @if(Session::has('account_deactivated'))
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
@@ -24,6 +22,9 @@
     @endif
 
     <div class="bg-white shadow-lg rounded-lg p-8">
+        <div class="flex justify-center mb-8">
+        <img class="w-40" src="{{ asset('images/dtrecord.png') }}" alt="Logo">
+    </div>
         <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
         <p class="text-gray-500 mb-6">Sign in to your account</p>
 
@@ -64,6 +65,8 @@
                 </button>
                 <a href="{{ route('password.request') }}" class="text-blue-600 hover:underline text-sm">Forgot password?</a>
             </div>
+            <a href="{{ route('register') }}" class="text-center text-blue-600">Create Account</a>
+
         </form>
 
         <p class="text-center text-gray-500 text-sm mt-4">
