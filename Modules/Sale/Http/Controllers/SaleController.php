@@ -7,6 +7,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Store;
 use Modules\People\Entities\Customer;
 use Modules\Product\Entities\Product;
 use Modules\Sale\Entities\Sale;
@@ -14,6 +15,7 @@ use Modules\Sale\Entities\SaleDetails;
 use Modules\Sale\Entities\SalePayment;
 use Modules\Sale\Http\Requests\StoreSaleRequest;
 use Modules\Sale\Http\Requests\UpdateSaleRequest;
+use Modules\People\Entities\Debtor;
 
 class SaleController extends Controller
 {
@@ -21,7 +23,8 @@ class SaleController extends Controller
     public function index(SalesDataTable $dataTable) {
         abort_if(Gate::denies('access_sales'), 403);
 
-        return $dataTable->render('sale::index');
+        $stores = Store::orderBy('name')->get();
+        return $dataTable->render('sale::index', compact('stores'));
     }
 
 
@@ -62,6 +65,7 @@ class SaleController extends Controller
                 'note' => $request->note,
                 'tax_amount' => Cart::instance('sale')->tax() * 100,
                 'discount_amount' => Cart::instance('sale')->discount() * 100,
+                'store_id' => $request->store_id,
             ]);
 
             foreach (Cart::instance('sale')->content() as $cart_item) {
@@ -88,6 +92,16 @@ class SaleController extends Controller
             }
 
             Cart::instance('sale')->destroy();
+
+            /** Auto-create/update debtor when sale on credit or partial payment */
+            if ($due_amount > 0 && $request->customer_id) {
+                $customer = Customer::findOrFail($request->customer_id);
+                $debtor = Debtor::firstOrCreate(
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+                );
+                $debtor->adjustBalance((int) round($due_amount * 100));
+            }
 
             if ($sale->paid_amount > 0) {
                 SalePayment::create([
@@ -170,6 +184,7 @@ class SaleController extends Controller
                 $sale_detail->delete();
             }
 
+            $oldDue = $sale->due_amount;
             $sale->update([
                 'date' => $request->date,
                 'reference' => $request->reference,
@@ -213,6 +228,19 @@ class SaleController extends Controller
             }
 
             Cart::instance('sale')->destroy();
+
+            /** Auto-update debtor balance delta on sale edit */
+            if ($request->customer_id) {
+                $customer = Customer::findOrFail($request->customer_id);
+                $debtor = Debtor::firstOrCreate(
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+                );
+                $delta = (int) round(($due_amount * 100) - $oldDue);
+                if ($delta !== 0) {
+                    $debtor->adjustBalance($delta);
+                }
+            }
         });
 
         toast('Sale Updated!', 'info');

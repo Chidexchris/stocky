@@ -26,4 +26,5 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group(['middleware' => ['auth', 'role:Super Admin'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('users', 'UsersController')->except('show');
     Route::resource('roles', 'RolesController')->except('show');
+    Route::resource('stores', 'StoresController')->except('show');
 });

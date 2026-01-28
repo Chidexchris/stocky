@@ -5,12 +5,20 @@ namespace Modules\PurchasesReturn\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
+use App\Models\Concerns\ScopedByStore;
 
 class PurchaseReturnPayment extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedByStore;
 
     protected $guarded = [];
+
+    public static function boot() {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->order_id = 'ORD-' . $model->reference;
+        });
+    }
 
     public function purchaseReturn() {
         return $this->belongsTo(PurchaseReturn::class, 'purchase_return_id', 'id');

@@ -20,6 +20,13 @@
             </a>
         </li>
         @endcan
+        @can('access_product_categories')
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('product-brands.*') ? 'c-active' : '' }}" href="{{ route('product-brands.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-tags" style="line-height: 1;"></i> Brands
+            </a>
+        </li>
+        @endcan
         @can('create_products')
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('products.create') ? 'c-active' : '' }}" href="{{ route('products.create') }}">
@@ -214,7 +221,7 @@
 @endcan
 
 @can('access_customers|access_suppliers')
-    <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('customers.*') || request()->routeIs('suppliers.*') ? 'c-show' : '' }}">
+    <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('customers.*') || request()->routeIs('suppliers.*') || request()->routeIs('debtors.*') || request()->routeIs('creditors.*') ? 'c-show' : '' }}">
         <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
             <i class="c-sidebar-nav-icon bi bi-people" style="line-height: 1;"></i> Parties
         </a>
@@ -225,11 +232,21 @@
                         <i class="c-sidebar-nav-icon bi bi-people-fill" style="line-height: 1;"></i> Customers
                     </a>
                 </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('debtors.*') ? 'c-active' : '' }}" href="{{ route('debtors.index') }}">
+                        <i class="c-sidebar-nav-icon bi bi-cash-stack" style="line-height: 1;"></i> Debtors
+                    </a>
+                </li>
             @endcan
             @can('access_suppliers')
                 <li class="c-sidebar-nav-item">
                     <a class="c-sidebar-nav-link {{ request()->routeIs('suppliers.*') ? 'c-active' : '' }}" href="{{ route('suppliers.index') }}">
                         <i class="c-sidebar-nav-icon bi bi-people-fill" style="line-height: 1;"></i> Suppliers
+                    </a>
+                </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('creditors.*') ? 'c-active' : '' }}" href="{{ route('creditors.index') }}">
+                        <i class="c-sidebar-nav-icon bi bi-cash-stack" style="line-height: 1;"></i> Creditors
                     </a>
                 </li>
             @endcan
@@ -278,16 +295,16 @@
 @endcan
 
 @can('access_user_management')
-    <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('roles*') ? 'c-show' : '' }}">
+    <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('roles*') || request()->routeIs('admin.stores*') ? 'c-show' : '' }}">
         <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
             <i class="c-sidebar-nav-icon bi bi-people" style="line-height: 1;"></i> User Management
         </a>
         <ul class="c-sidebar-nav-dropdown-items">
-            <!-- <li class="c-sidebar-nav-item">
+            <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('admin.dashboard') ? 'c-active' : '' }}" href="{{ route('admin.dashboard') }}">
                     <i class="c-sidebar-nav-icon bi bi-speedometer2" style="line-height: 1;"></i> Admin Dashboard
                 </a>
-            </li> -->
+            </li>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('users.create') ? 'c-active' : '' }}" href="{{ route('users.create') }}">
                     <i class="c-sidebar-nav-icon bi bi-person-plus" style="line-height: 1;"></i> Create User
@@ -296,6 +313,11 @@
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('users*') ? 'c-active' : '' }}" href="{{ route('users.index') }}">
                     <i class="c-sidebar-nav-icon bi bi-person-lines-fill" style="line-height: 1;"></i> All Users
+                </a>
+            </li>
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link {{ request()->routeIs('admin.stores*') ? 'c-active' : '' }}" href="{{ route('admin.stores.index') }}">
+                    <i class="c-sidebar-nav-icon bi bi-shop" style="line-height: 1;"></i> Stores
                 </a>
             </li>
             <li class="c-sidebar-nav-item">

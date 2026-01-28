@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Store;
 use Modules\People\Entities\Customer;
 use Modules\Product\Entities\Product;
 use Modules\Quotation\DataTables\QuotationsDataTable;
@@ -21,7 +22,8 @@ class QuotationController extends Controller
     public function index(QuotationsDataTable $dataTable) {
         abort_if(Gate::denies('access_quotations'), 403);
 
-        return $dataTable->render('quotation::index');
+        $stores = Store::orderBy('name')->get();
+        return $dataTable->render('quotation::index', compact('stores'));
     }
 
 

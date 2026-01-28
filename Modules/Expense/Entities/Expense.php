@@ -5,10 +5,11 @@ namespace Modules\Expense\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
+use App\Models\Concerns\ScopedByStore;
 
 class Expense extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedByStore;
 
     protected $guarded = [];
 
@@ -22,6 +23,7 @@ class Expense extends Model
         static::creating(function ($model) {
             $number = Expense::max('id') + 1;
             $model->reference = make_reference_id('EXP', $number);
+            $model->order_id = 'ORD-' . $model->reference;
         });
     }
 

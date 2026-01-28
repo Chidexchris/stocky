@@ -53,6 +53,10 @@ class SalePaymentsDataTable extends DataTable
             Column::make('date')
                 ->className('align-middle text-center'),
 
+            Column::make('order_id')
+                ->title('Order ID')
+                ->className('align-middle text-center'),
+
             Column::make('reference')
                 ->className('align-middle text-center'),
 

@@ -53,6 +53,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if(auth()->user()->hasRole('Super Admin'))
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="store_id">Store</label>
+                                            <select class="form-control" name="store_id" id="store_id">
+                                                <option value="">Select Store</option>
+                                                @foreach(\App\Models\Store::where('is_active', true)->get() as $store)
+                                                    <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             <livewire:product-cart :cartInstance="'sale'"/>

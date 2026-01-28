@@ -24,7 +24,11 @@ class ExpensesDataTable extends DataTable
     }
 
     public function query(Expense $model) {
-        return $model->newQuery()->with('category');
+        return $model->newQuery()
+            ->with('category')
+            ->when(auth()->check() && auth()->user()->hasRole('Super Admin') && request()->filled('store_id'), function ($q) {
+                $q->where('store_id', request('store_id'));
+            });
     }
 
     public function html() {
@@ -51,6 +55,10 @@ class ExpensesDataTable extends DataTable
     protected function getColumns() {
         return [
             Column::make('date')
+                ->className('text-center align-middle'),
+
+            Column::make('order_id')
+                ->title('Order ID')
                 ->className('text-center align-middle'),
 
             Column::make('reference')

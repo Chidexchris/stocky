@@ -4,10 +4,11 @@ namespace Modules\SalesReturn\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\ScopedByStore;
 
 class SaleReturn extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedByStore;
 
     protected $guarded = [];
 
@@ -25,6 +26,7 @@ class SaleReturn extends Model
         static::creating(function ($model) {
             $number = SaleReturn::max('id') + 1;
             $model->reference = make_reference_id('SLRN', $number);;
+            $model->order_id = 'ORD-' . $model->reference;
         });
     }
 

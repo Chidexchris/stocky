@@ -25,6 +25,18 @@
 
                         <hr>
 
+                        @if(auth()->user()->hasRole('Super Admin'))
+                            <div class="mb-3" style="max-width: 320px;">
+                                <label for="storeFilter" class="form-label">Filter by Store</label>
+                                <select id="storeFilter" class="form-select">
+                                    <option value="">All Stores</option>
+                                    @foreach($stores as $store)
+                                        <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+
                         <div class="table-responsive">
                             {!! $dataTable->table() !!}
                         </div>
@@ -37,4 +49,22 @@
 
 @push('page_scripts')
     {!! $dataTable->scripts() !!}
+    @if(auth()->user()->hasRole('Super Admin'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var table = window.LaravelDataTables["sale-returns-table"];
+            $('#storeFilter').on('change', function() {
+                var val = this.value || '';
+                var base = table.ajax.url();
+                var url = new URL(base, window.location.origin);
+                if (val) {
+                    url.searchParams.set('store_id', val);
+                } else {
+                    url.searchParams.delete('store_id');
+                }
+                table.ajax.url(url.toString()).load();
+            });
+        });
+    </script>
+    @endif
 @endpush

@@ -27,7 +27,10 @@ class QuotationsDataTable extends DataTable
     }
 
     public function query(Quotation $model) {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->when(auth()->check() && auth()->user()->hasRole('Super Admin') && request()->filled('store_id'), function ($q) {
+                $q->where('store_id', request('store_id'));
+            });
     }
 
     public function html() {
@@ -54,6 +57,10 @@ class QuotationsDataTable extends DataTable
     protected function getColumns() {
         return [
             Column::make('date')
+                ->className('text-center align-middle'),
+
+            Column::make('order_id')
+                ->title('Order ID')
                 ->className('text-center align-middle'),
 
             Column::make('reference')

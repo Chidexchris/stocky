@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Store;
 use Modules\Expense\Entities\Expense;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Exp;
 
@@ -16,7 +17,8 @@ class ExpenseController extends Controller
     public function index(ExpensesDataTable $dataTable) {
         abort_if(Gate::denies('access_expenses'), 403);
 
-        return $dataTable->render('expense::expenses.index');
+        $stores = Store::orderBy('name')->get();
+        return $dataTable->render('expense::expenses.index', compact('stores'));
     }
 
 

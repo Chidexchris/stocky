@@ -36,14 +36,16 @@ class UsersController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|max:255|confirmed'
+            'password' => 'required|string|min:8|max:255|confirmed',
+            'store_id' => 'nullable|numeric|exists:stores,id'
         ]);
 
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'is_active' => $request->is_active
+            'is_active' => $request->is_active,
+            'store_id' => $request->store_id
         ]);
 
         $user->assignRole($request->role);
@@ -78,12 +80,14 @@ class UsersController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email,'.$user->id,
+            'store_id' => 'nullable|numeric|exists:stores,id'
         ]);
 
         $user->update([
             'name'     => $request->name,
             'email'    => $request->email,
-            'is_active' => $request->is_active
+            'is_active' => $request->is_active,
+            'store_id' => $request->store_id
         ]);
 
         $user->syncRoles($request->role);

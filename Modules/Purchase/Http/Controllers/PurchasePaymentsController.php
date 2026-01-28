@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Modules\Purchase\Entities\Purchase;
 use Modules\Purchase\Entities\PurchasePayment;
+use Modules\People\Entities\Creditor;
 
 class PurchasePaymentsController extends Controller
 {
@@ -70,6 +71,14 @@ class PurchasePaymentsController extends Controller
                 'due_amount' => $due_amount * 100,
                 'payment_status' => $payment_status
             ]);
+
+            /** Reduce creditor balance and settle when zero */
+            $supplier = Supplier::findOrFail($purchase->supplier_id);
+            $creditor = Creditor::firstOrCreate(
+                ['name' => $supplier->supplier_name, 'email' => $supplier->supplier_email],
+                ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+            );
+            $creditor->adjustBalance((int) round(-$request->amount * 100));
         });
 
         toast('Purchase Payment Created!', 'success');
@@ -126,6 +135,17 @@ class PurchasePaymentsController extends Controller
                 'purchase_id' => $request->purchase_id,
                 'payment_method' => $request->payment_method
             ]);
+
+            /** Adjust creditor delta on payment edit */
+            $supplier = Supplier::findOrFail($purchase->supplier_id);
+            $creditor = Creditor::firstOrCreate(
+                ['name' => $supplier->supplier_name, 'email' => $supplier->supplier_email],
+                ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+            );
+            $deltaCents = (int) round(($purchasePayment->amount - $request->amount) * 100);
+            if ($deltaCents !== 0) {
+                $creditor->adjustBalance($deltaCents);
+            }
         });
 
         toast('Purchase Payment Updated!', 'info');

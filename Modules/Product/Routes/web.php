@@ -13,5 +13,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('products', 'ProductController');
     //Product Category
     Route::resource('product-categories', 'CategoriesController')->except('create', 'show');
+    //Product Brand
+    Route::resource('product-brands', 'BrandsController')->except('create');
 });
-

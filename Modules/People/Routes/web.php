@@ -17,5 +17,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('customers', 'CustomersController');
     //Suppliers
     Route::resource('suppliers', 'SuppliersController');
+    //Debtors
+    Route::resource('debtors', 'DebtorsController')->only(['index', 'show', 'update', 'destroy']);
+    //Creditors
+    Route::resource('creditors', 'CreditorsController')->only(['index', 'show', 'update', 'destroy']);
 
 });

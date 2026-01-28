@@ -56,6 +56,16 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="store_id">Store</label>
+                                <select class="form-control" name="store_id" id="store_id">
+                                    <option value="">Select Store</option>
+                                    @foreach(\App\Models\Store::where('is_active', true)->get() as $store)
+                                        <option value="{{ $store->id }}" {{ $user->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="is_active">Status <span class="text-danger">*</span></label>
                                 <select class="form-control" name="is_active" id="is_active" required>
                                     <option value="1" {{ $user->is_active == 1 ? 'selected' : ''}}>Active</option>
@@ -111,5 +121,4 @@
         });
     </script>
 @endpush
-
 

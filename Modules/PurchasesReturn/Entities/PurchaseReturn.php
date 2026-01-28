@@ -4,10 +4,11 @@ namespace Modules\PurchasesReturn\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\ScopedByStore;
 
 class PurchaseReturn extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedByStore;
 
     protected $guarded = [];
 
@@ -25,6 +26,7 @@ class PurchaseReturn extends Model
         static::creating(function ($model) {
             $number = PurchaseReturn::max('id') + 1;
             $model->reference = make_reference_id('PRRN', $number);
+            $model->order_id = 'ORD-' . $model->reference;
         });
     }
 

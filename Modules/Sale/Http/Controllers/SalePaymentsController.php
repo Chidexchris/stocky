@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Modules\Sale\Entities\Sale;
 use Modules\Sale\Entities\SalePayment;
+use Modules\People\Entities\Debtor;
 
 class SalePaymentsController extends Controller
 {
@@ -71,6 +72,16 @@ class SalePaymentsController extends Controller
                 'due_amount' => $due_amount * 100,
                 'payment_status' => $payment_status
             ]);
+
+            /** Reduce debtor balance and settle when zero */
+            if ($sale->customer_id) {
+                $customer = Customer::findOrFail($sale->customer_id);
+                $debtor = Debtor::firstOrCreate(
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+                );
+                $debtor->adjustBalance((int) round(-$request->amount * 100));
+            }
         });
 
         toast('Sale Payment Created!', 'success');
@@ -127,6 +138,19 @@ class SalePaymentsController extends Controller
                 'sale_id' => $request->sale_id,
                 'payment_method' => $request->payment_method
             ]);
+
+            /** Adjust debtor delta on payment edit */
+            if ($sale->customer_id) {
+                $customer = Customer::findOrFail($sale->customer_id);
+                $debtor = Debtor::firstOrCreate(
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+                );
+                $deltaCents = (int) round(($salePayment->amount - $request->amount) * 100);
+                if ($deltaCents !== 0) {
+                    $debtor->adjustBalance($deltaCents);
+                }
+            }
         });
 
         toast('Sale Payment Updated!', 'info');

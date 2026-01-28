@@ -25,7 +25,8 @@ class User extends Authenticatable implements HasMedia
         'name',
         'email',
         'password',
-        'is_active'
+        'is_active',
+        'store_id'
     ];
 
     /**
@@ -57,5 +58,9 @@ class User extends Authenticatable implements HasMedia
 
     public function scopeIsActive(Builder $builder) {
         return $builder->where('is_active', 1);
+    }
+
+    public function store() {
+        return $this->belongsTo(Store::class, 'store_id', 'id');
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Store;
 use Modules\Adjustment\Entities\AdjustedProduct;
 use Modules\Adjustment\Entities\Adjustment;
 use Modules\Product\Entities\Product;
@@ -18,7 +19,8 @@ class AdjustmentController extends Controller
     public function index(AdjustmentsDataTable $dataTable) {
         abort_if(Gate::denies('access_adjustments'), 403);
 
-        return $dataTable->render('adjustment::index');
+        $stores = Store::orderBy('name')->get();
+        return $dataTable->render('adjustment::index', compact('stores'));
     }
 
 

@@ -21,7 +21,11 @@ class AdjustmentsDataTable extends DataTable
     }
 
     public function query(Adjustment $model) {
-        return $model->newQuery()->withCount('adjustedProducts');
+        return $model->newQuery()
+            ->withCount('adjustedProducts')
+            ->when(auth()->check() && auth()->user()->hasRole('Super Admin') && request()->filled('store_id'), function ($q) {
+                $q->where('store_id', request('store_id'));
+            });
     }
 
     public function html() {
@@ -48,6 +52,10 @@ class AdjustmentsDataTable extends DataTable
     protected function getColumns() {
         return [
             Column::make('date')
+                ->className('text-center align-middle'),
+
+            Column::make('order_id')
+                ->title('Order ID')
                 ->className('text-center align-middle'),
 
             Column::make('reference')

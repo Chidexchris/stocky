@@ -4,10 +4,11 @@ namespace Modules\Purchase\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\ScopedByStore;
 
 class Purchase extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedByStore;
 
     protected $guarded = [];
 
@@ -25,6 +26,7 @@ class Purchase extends Model
         static::creating(function ($model) {
             $number = Purchase::max('id') + 1;
             $model->reference = make_reference_id('PR', $number);
+            $model->order_id = 'ORD-' . $model->reference;
         });
     }
 

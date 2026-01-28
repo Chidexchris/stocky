@@ -7,6 +7,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Store;
 use Modules\People\Entities\Customer;
 use Modules\Product\Entities\Product;
 use Modules\SalesReturn\Entities\SaleReturn;
@@ -21,7 +22,8 @@ class SalesReturnController extends Controller
     public function index(SaleReturnsDataTable $dataTable) {
         abort_if(Gate::denies('access_sale_returns'), 403);
 
-        return $dataTable->render('salesreturn::index');
+        $stores = Store::orderBy('name')->get();
+        return $dataTable->render('salesreturn::index', compact('stores'));
     }
 
 

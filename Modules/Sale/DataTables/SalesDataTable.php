@@ -36,7 +36,10 @@ class SalesDataTable extends DataTable
     }
 
     public function query(Sale $model) {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->when(auth()->check() && auth()->user()->hasRole('Super Admin') && request()->filled('store_id'), function ($q) {
+                $q->where('store_id', request('store_id'));
+            });
     }
 
     public function html() {
@@ -62,6 +65,10 @@ class SalesDataTable extends DataTable
 
     protected function getColumns() {
         return [
+            Column::make('order_id')
+                ->title('Order ID')
+                ->className('text-center align-middle'),
+
             Column::make('reference')
                 ->className('text-center align-middle'),
 

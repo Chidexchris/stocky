@@ -7,6 +7,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Store;
 use Modules\People\Entities\Supplier;
 use Modules\Product\Entities\Product;
 use Modules\PurchasesReturn\Entities\PurchaseReturn;
@@ -21,7 +22,8 @@ class PurchasesReturnController extends Controller
     public function index(PurchaseReturnsDataTable $dataTable) {
         abort_if(Gate::denies('access_purchase_returns'), 403);
 
-        return $dataTable->render('purchasesreturn::index');
+        $stores = Store::orderBy('name')->get();
+        return $dataTable->render('purchasesreturn::index', compact('stores'));
     }
 
 

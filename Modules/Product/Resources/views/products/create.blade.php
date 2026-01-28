@@ -58,6 +58,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label for="brand_id">Brand</label>
+                                        <div class="input-group">
+                                            <select class="form-control" name="brand_id" id="brand_id">
+                                                <option value="" selected >Select Brand</option>
+                                                @foreach(\Modules\Product\Entities\Brand::all() as $brand)
+                                                    <option value="{{ $brand->id }}">{{ $brand->brand_name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="input-group-append d-flex">
+                                                <button data-toggle="modal" data-target="#brandCreateModal" class="btn btn-outline-primary" type="button">
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                         <label for="barcode_symbology">Barcode Symbology <span class="text-danger">*</span></label>
                                         <select class="form-control" name="product_barcode_symbology" id="barcode_symbology" required>
                                             <option value="" selected disabled>Select Symbology</option>
@@ -159,6 +174,8 @@
 
     <!-- Create Category Modal -->
     @include('product::includes.category-modal')
+    <!-- Create Brand Modal -->
+    @include('product::includes.brand-modal')
 @endsection
 
 @section('third_party_scripts')
@@ -238,4 +255,3 @@
         });
     </script>
 @endpush
-

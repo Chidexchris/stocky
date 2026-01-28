@@ -5,12 +5,20 @@ namespace Modules\Purchase\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
+use App\Models\Concerns\ScopedByStore;
 
 class PurchasePayment extends Model
 {
-    use HasFactory;
+    use HasFactory, ScopedByStore;
 
     protected $guarded = [];
+
+    public static function boot() {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->order_id = 'ORD-' . $model->reference;
+        });
+    }
 
     public function purchase() {
         return $this->belongsTo(Purchase::class, 'purchase_id', 'id');

@@ -7,6 +7,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Store;
 use Modules\People\Entities\Supplier;
 use Modules\Product\Entities\Product;
 use Modules\Purchase\Entities\Purchase;
@@ -14,6 +15,7 @@ use Modules\Purchase\Entities\PurchaseDetail;
 use Modules\Purchase\Entities\PurchasePayment;
 use Modules\Purchase\Http\Requests\StorePurchaseRequest;
 use Modules\Purchase\Http\Requests\UpdatePurchaseRequest;
+use Modules\People\Entities\Creditor;
 
 class PurchaseController extends Controller
 {
@@ -21,7 +23,8 @@ class PurchaseController extends Controller
     public function index(PurchaseDataTable $dataTable) {
         abort_if(Gate::denies('access_purchases'), 403);
 
-        return $dataTable->render('purchase::index');
+        $stores = Store::orderBy('name')->get();
+        return $dataTable->render('purchase::index', compact('stores'));
     }
 
 
@@ -87,6 +90,16 @@ class PurchaseController extends Controller
             }
 
             Cart::instance('purchase')->destroy();
+
+            /** Auto-create/update creditor when purchase on credit or partial payment */
+            if ($due_amount > 0) {
+                $supplier = Supplier::findOrFail($request->supplier_id);
+                $creditor = Creditor::firstOrCreate(
+                    ['name' => $supplier->supplier_name, 'email' => $supplier->supplier_email],
+                    ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+                );
+                $creditor->adjustBalance((int) round($due_amount * 100));
+            }
 
             if ($purchase->paid_amount > 0) {
                 PurchasePayment::create([
@@ -167,6 +180,7 @@ class PurchaseController extends Controller
                 $purchase_detail->delete();
             }
 
+            $oldDue = $purchase->due_amount;
             $purchase->update([
                 'date' => $request->date,
                 'reference' => $request->reference,
@@ -210,6 +224,16 @@ class PurchaseController extends Controller
             }
 
             Cart::instance('purchase')->destroy();
+            /** Auto-update creditor delta on purchase edit */
+            $supplier = Supplier::findOrFail($request->supplier_id);
+            $creditor = Creditor::firstOrCreate(
+                ['name' => $supplier->supplier_name, 'email' => $supplier->supplier_email],
+                ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
+            );
+            $delta = (int) round(($due_amount * 100) - $oldDue);
+            if ($delta !== 0) {
+                $creditor->adjustBalance($delta);
+            }
         });
 
         toast('Purchase Updated!', 'info');
