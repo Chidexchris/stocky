@@ -37,4 +37,32 @@
 
 @push('page_scripts')
     {!! $dataTable->scripts() !!}
+    @if(auth()->user()->hasRole('Super Admin'))
+    <script>
+        $(function() {
+            var tableId = "product-table";
+            
+            function initFilter() {
+                if (window.LaravelDataTables && window.LaravelDataTables[tableId]) {
+                    var table = window.LaravelDataTables[tableId];
+                    
+                    $('#storeFilter').on('change', function() {
+                        table.draw();
+                    });
+
+                    // Hook into the DataTables request to add the store_id parameter
+                    table.on('preXhr.dt', function (e, settings, data) {
+                        data.store_id = $('#storeFilter').val();
+                    });
+                    
+                    console.log('Store filter initialized for ' + tableId);
+                } else {
+                    setTimeout(initFilter, 200);
+                }
+            }
+            
+            initFilter();
+        });
+    </script>
+    @endif
 @endpush

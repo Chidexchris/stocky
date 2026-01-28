@@ -19,7 +19,9 @@ class ProductController extends Controller
     public function index(ProductDataTable $dataTable) {
         abort_if(Gate::denies('access_products'), 403);
 
-        return $dataTable->render('product::products.index');
+        $stores = \App\Models\Store::orderBy('name')->get();
+
+        return $dataTable->render('product::products.index', compact('stores'));
     }
 
 

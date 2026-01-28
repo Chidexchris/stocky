@@ -8,11 +8,12 @@ use Modules\Product\Notifications\NotifyQuantityAlert;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Models\Concerns\ScopedByStore;
 
 class Product extends Model implements HasMedia
 {
 
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, ScopedByStore;
 
     protected $guarded = [];
 

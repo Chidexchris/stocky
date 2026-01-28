@@ -51,19 +51,29 @@
     {!! $dataTable->scripts() !!}
     @if(auth()->user()->hasRole('Super Admin'))
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var table = window.LaravelDataTables["sales-table"];
-            $('#storeFilter').on('change', function() {
-                var val = this.value || '';
-                var base = table.ajax.url();
-                var url = new URL(base, window.location.origin);
-                if (val) {
-                    url.searchParams.set('store_id', val);
+        $(function() {
+            var tableId = "sales-table";
+            
+            function initFilter() {
+                if (window.LaravelDataTables && window.LaravelDataTables[tableId]) {
+                    var table = window.LaravelDataTables[tableId];
+                    
+                    $('#storeFilter').on('change', function() {
+                        table.draw();
+                    });
+
+                    // Hook into the DataTables request to add the store_id parameter
+                    table.on('preXhr.dt', function (e, settings, data) {
+                        data.store_id = $('#storeFilter').val();
+                    });
+                    
+                    console.log('Store filter initialized for ' + tableId);
                 } else {
-                    url.searchParams.delete('store_id');
+                    setTimeout(initFilter, 200);
                 }
-                table.ajax.url(url.toString()).load();
-            });
+            }
+            
+            initFilter();
         });
     </script>
     @endif

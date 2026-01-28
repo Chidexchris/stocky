@@ -4,11 +4,11 @@ namespace Modules\People\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\ScopedByStore;
 
 class Customer extends Model
 {
-
-    use HasFactory;
+    use HasFactory, ScopedByStore;
 
     protected $guarded = [];
 
