@@ -19,6 +19,10 @@ class PurchaseReturn extends Model
     public function purchaseReturnPayments() {
         return $this->hasMany(PurchaseReturnPayment::class, 'purchase_return_id', 'id');
     }
+    
+    public function supplier() {
+        return $this->belongsTo(\Modules\People\Entities\Supplier::class, 'supplier_id', 'id');
+    }
 
     public static function boot() {
         parent::boot();

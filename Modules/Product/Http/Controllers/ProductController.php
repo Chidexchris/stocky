@@ -33,7 +33,10 @@ class ProductController extends Controller
 
 
     public function store(StoreProductRequest $request) {
-        $product = Product::create($request->except('document'));
+        $payload = array_merge($request->except('document'), [
+            'product_quantity' => 0
+        ]);
+        $product = Product::create($payload);
 
         if ($request->has('document')) {
             foreach ($request->input('document', []) as $file) {

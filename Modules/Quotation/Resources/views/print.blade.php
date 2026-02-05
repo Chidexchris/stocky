@@ -23,10 +23,10 @@
                     <div class="row mb-4">
                         <div class="col-xs-4 mb-3 mb-md-0">
                             <h4 class="mb-2" style="border-bottom: 1px solid #dddddd;padding-bottom: 10px;">Company Info:</h4>
-                            <div><strong>{{ settings()->company_name }}</strong></div>
-                            <div>{{ settings()->company_address }}</div>
-                            <div>Email: {{ settings()->company_email }}</div>
-                            <div>Phone: {{ settings()->company_phone }}</div>
+                            <div><strong>{{ env('COMPANY_NAME') }}</strong></div>
+                            <div>{{ env('COMPANY_ADDRESS') }}</div>
+                            <div>Email: {{ env('COMPANY_EMAIL') }}</div>
+                            <div>Phone: {{ env('COMPANY_PHONE') }}</div>
                         </div>
 
                         <div class="col-xs-4 mb-3 mb-md-0">
@@ -121,7 +121,7 @@
                     </div>
                     <div class="row" style="margin-top: 25px;">
                         <div class="col-xs-12">
-                            <p style="font-style: italic;text-align: center">{{ settings()->company_name }} &copy; {{ date('Y') }}</p>
+                            <p style="font-style: italic;text-align: center">{{ env('COMPANY_NAME') }} &copy; {{ date('Y') }}</p>
                         </div>
                     </div>
                 </div>

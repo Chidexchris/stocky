@@ -40,23 +40,25 @@
                             </div>
 
                             <div class="form-row">
-                                <div class="col-md-6">
-                                    <label for="category_id">Category <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <select class="form-control" name="category_id" id="category_id" required>
-                                            <option value="" selected disabled>Select Category</option>
-                                            @foreach(\Modules\Product\Entities\Category::all() as $category)
-                                                <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <div class="input-group-append d-flex">
-                                            <button data-toggle="modal" data-target="#categoryCreateModal" class="btn btn-outline-primary" type="button">
-                                                Add
-                                            </button>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="category_id">Category <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <select class="form-control" name="category_id" id="category_id" required>
+                                                <option value="" selected disabled>Select Category</option>
+                                                @foreach(\Modules\Product\Entities\Category::all() as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="input-group-append d-flex">
+                                                <button data-toggle="modal" data-target="#categoryCreateModal" class="btn btn-outline-primary" type="button">
+                                                    Add
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="brand_id">Brand</label>
                                         <div class="input-group">
@@ -73,6 +75,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
                                         <label for="barcode_symbology">Barcode Symbology <span class="text-danger">*</span></label>
                                         <select class="form-control" name="product_barcode_symbology" id="barcode_symbology" required>
                                             <option value="" selected disabled>Select Symbology</option>
@@ -102,13 +107,7 @@
                             </div>
 
                             <div class="form-row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_quantity">Quantity <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="product_quantity" required value="{{ old('product_quantity') }}" min="1">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="product_stock_alert">Alert Quantity <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="product_stock_alert" required value="{{ old('product_stock_alert', 0) }}" min="0" max="100">

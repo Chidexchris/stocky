@@ -5,41 +5,48 @@ namespace Modules\People\Http\Controllers;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
-use Modules\People\Entities\Creditor;
+use Modules\Purchase\Entities\Purchase;
+use Modules\SalesReturn\Entities\SaleReturn;
+use App\Models\Store;
 
 class CreditorsController extends Controller
 {
-    /** List all creditors (UI view) */
-    public function index() {
+    public function index(Request $request) {
         abort_if(Gate::denies('access_suppliers'), 403);
-        $creditors = Creditor::orderByDesc('updated_at')->get();
-        return view('people::creditors.index', compact('creditors'));
+
+        $purchases = collect();
+        $saleReturns = collect();
+
+        if (!$request->filled('type') || $request->type == 'supplier') {
+            $purchases = Purchase::where('due_amount', '>', 0)
+                ->when($request->filled('store_id'), function ($query) use ($request) {
+                    $query->where('store_id', $request->store_id);
+                })
+                ->orderByDesc('updated_at')
+                ->get();
+        }
+
+        if (!$request->filled('type') || $request->type == 'customer') {
+            $saleReturns = SaleReturn::where('due_amount', '>', 0)
+                ->when($request->filled('store_id'), function ($query) use ($request) {
+                    $query->where('store_id', $request->store_id);
+                })
+                ->orderByDesc('updated_at')
+                ->get();
+        }
+
+        $creditors = $purchases->concat($saleReturns);
+        $stores = Store::all();
+
+        return view('people::creditors.index', compact('creditors', 'stores'));
     }
 
-    /** Show single creditor (UI view) */
-    public function show(Creditor $creditor) {
+    public function show($id) {
         abort_if(Gate::denies('access_suppliers'), 403);
-        return view('people::creditors.show', compact('creditor'));
-    }
-
-    /** Manually update creditor (e.g., set due_date) */
-    public function update(Request $request, Creditor $creditor) {
-        abort_if(Gate::denies('access_suppliers'), 403);
-        $request->validate([
-            'due_date' => 'nullable|date',
-        ]);
-        $creditor->update([
-            'due_date' => $request->due_date,
-        ]);
-        toast('Creditor updated', 'info');
-        return redirect()->route('creditors.show', $creditor);
-    }
-
-    /** Mark settled (delete) */
-    public function destroy(Creditor $creditor) {
-        abort_if(Gate::denies('access_suppliers'), 403);
-        $creditor->delete();
-        toast('Creditor settled', 'success');
-        return redirect()->route('creditors.index');
+        
+        $purchase = Purchase::findOrFail($id);
+        $supplier = $purchase->supplier;
+        
+        return view('people::creditors.show', compact('purchase', 'supplier'));
     }
 }

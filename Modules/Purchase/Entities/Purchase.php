@@ -20,6 +20,10 @@ class Purchase extends Model
         return $this->hasMany(PurchasePayment::class, 'purchase_id', 'id');
     }
 
+    public function supplier() {
+        return $this->belongsTo(\Modules\People\Entities\Supplier::class, 'supplier_id', 'id');
+    }
+
     public static function boot() {
         parent::boot();
 

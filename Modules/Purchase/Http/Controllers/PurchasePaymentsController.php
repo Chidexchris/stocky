@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Modules\Purchase\Entities\Purchase;
 use Modules\Purchase\Entities\PurchasePayment;
 use Modules\People\Entities\Creditor;
+use Modules\People\Entities\Supplier;
 
 class PurchasePaymentsController extends Controller
 {

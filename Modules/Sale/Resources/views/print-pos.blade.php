@@ -57,11 +57,11 @@
 <div style="max-width:400px;margin:0 auto">
     <div id="receipt-data">
         <div class="centered">
-            <h2 style="margin-bottom: 5px">{{ settings()->company_name }}</h2>
+            <h2 style="margin-bottom: 5px">{{ env('COMPANY_NAME') }}</h2>
 
             <p style="font-size: 11px;line-height: 15px;margin-top: 0">
-                {{ settings()->company_email }}, {{ settings()->company_phone }}
-                <br>{{ settings()->company_address }}
+                {{ env('COMPANY_EMAIL') }}, {{ env('COMPANY_PHONE') }}
+                <br>{{ env('COMPANY_ADDRESS') }}
             </p>
         </div>
         <p>

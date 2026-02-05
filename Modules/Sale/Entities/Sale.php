@@ -20,6 +20,10 @@ class Sale extends Model
         return $this->hasMany(SalePayment::class, 'sale_id', 'id');
     }
 
+    public function customer() {
+        return $this->belongsTo(\Modules\People\Entities\Customer::class, 'customer_id', 'id');
+    }
+
     public static function boot() {
         parent::boot();
 

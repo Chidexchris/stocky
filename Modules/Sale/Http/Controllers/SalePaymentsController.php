@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Modules\Sale\Entities\Sale;
 use Modules\Sale\Entities\SalePayment;
 use Modules\People\Entities\Debtor;
+use Modules\People\Entities\Customer;
 
 class SalePaymentsController extends Controller
 {
