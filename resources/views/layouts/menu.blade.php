@@ -321,6 +321,11 @@
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link {{ request()->routeIs('admin.login-logs*') ? 'c-active' : '' }}" href="{{ route('admin.login-logs.index') }}">
+                    <i class="c-sidebar-nav-icon bi bi-box-arrow-in-right" style="line-height: 1;"></i> Login Logs
+                </a>
+            </li>
+            <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('roles*') ? 'c-active' : '' }}" href="{{ route('roles.index') }}">
                     <i class="c-sidebar-nav-icon bi bi-key" style="line-height: 1;"></i> Roles & Permissions
                 </a>

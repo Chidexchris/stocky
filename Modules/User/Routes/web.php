@@ -27,4 +27,5 @@ Route::group(['middleware' => ['auth', 'role:Super Admin'], 'prefix' => 'admin',
     Route::resource('users', 'UsersController')->except('show');
     Route::resource('roles', 'RolesController')->except('show');
     Route::resource('stores', 'StoresController')->except('show');
+    Route::get('login-logs', 'LoginLogsController@index')->name('login-logs.index');
 });
