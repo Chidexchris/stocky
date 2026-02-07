@@ -14,7 +14,7 @@ class LoginLogsController extends Controller
     public function index(Request $request) {
         abort_if(Gate::denies('access_user_management'), 403);
 
-        $query = LoginLog::with(['user', 'store'])->orderByDesc('id');
+        $query = LoginLog::with(['user', 'store'])->orderByDesc('created_at');
 
         if ($request->filled('store_id')) {
             $query->where('store_id', $request->get('store_id'));
