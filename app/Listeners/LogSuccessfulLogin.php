@@ -11,6 +11,7 @@ class LogSuccessfulLogin
     {
         LoginLog::create([
             'user_id' => $event->user->id,
+            'business_id' => $event->user->business_id,
             'store_id' => $event->user->store_id,
             'event_type' => 'login',
             'ip_address' => request()->ip(),

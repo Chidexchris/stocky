@@ -37,8 +37,14 @@ class LoginLogsController extends Controller
         }
 
         $logs = $query->paginate(50)->appends($request->query());
-        $stores = Store::orderBy('name')->get();
-        $users = User::orderBy('name')->get();
+        
+        $stores = Store::when(!auth()->user()->hasRole('Super Admin'), function ($q) {
+            return $q->where('business_id', auth()->user()->business_id);
+        })->orderBy('name')->get();
+
+        $users = User::when(!auth()->user()->hasRole('Super Admin'), function ($q) {
+            return $q->where('business_id', auth()->user()->business_id);
+        })->orderBy('name')->get();
 
         return view('user::logs.index', compact('logs', 'stores', 'users'));
     }
