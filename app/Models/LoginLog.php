@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LoginLog extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\BelongsToBusiness, \App\Models\Concerns\ScopedByStore;
 
     protected $guarded = [];
 

@@ -238,4 +238,6 @@ return [
         'SnappyImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
     ],
 
+    'superadmin_allowed_ips' => env('SUPERADMIN_ALLOWED_IPS', ''),
+
 ];

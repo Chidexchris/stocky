@@ -11,7 +11,9 @@ class BarcodeController extends Controller
     public function printBarcode() {
         abort_if(Gate::denies('print_barcodes'), 403);
 
-        return view('product::barcode.index');
+        $stores = \App\Models\Store::where('is_active', true)->get();
+
+        return view('product::barcode.index', compact('stores'));
     }
 
 }

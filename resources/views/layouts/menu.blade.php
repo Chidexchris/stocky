@@ -71,6 +71,28 @@
         </ul>
     </li>
 @endcan
+
+@can('access_transfers')
+    <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('transfers.*') ? 'c-show' : '' }}">
+        <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+            <i class="c-sidebar-nav-icon bi bi-arrow-left-right" style="line-height: 1;"></i> Stock Transfers
+        </a>
+        <ul class="c-sidebar-nav-dropdown-items">
+            @can('create_transfers')
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('transfers.create') ? 'c-active' : '' }}" href="{{ route('transfers.create') }}">
+                        <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Transfer
+                    </a>
+                </li>
+            @endcan
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link {{ request()->routeIs('transfers.index') ? 'c-active' : '' }}" href="{{ route('transfers.index') }}">
+                    <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Transfers
+                </a>
+            </li>
+        </ul>
+    </li>
+@endcan
  
 
 @can('access_quotations')
@@ -220,7 +242,7 @@
     </li>
 @endcan
 
-@can('access_customers|access_suppliers')
+@canany(['access_customers', 'access_suppliers'])
     <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('customers.*') || request()->routeIs('suppliers.*') || request()->routeIs('debtors.*') || request()->routeIs('creditors.*') ? 'c-show' : '' }}">
         <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
             <i class="c-sidebar-nav-icon bi bi-people" style="line-height: 1;"></i> Parties
@@ -252,7 +274,7 @@
             @endcan
         </ul>
     </li>
-@endcan
+@endcanany
 
 @can('access_reports')
     <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
@@ -294,17 +316,39 @@
     </li>
 @endcan
 
+@can('access_stores')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('stores*') ? 'c-show' : '' }}">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-shop" style="line-height: 1;"></i> Stores
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        @can('create_stores')
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('stores.create') ? 'c-active' : '' }}" href="{{ route('stores.create') }}">
+                <i class="c-sidebar-nav-icon bi bi-plus-circle" style="line-height: 1;"></i> Create Store
+            </a>
+        </li>
+        @endcan
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('stores.index') ? 'c-active' : '' }}" href="{{ route('stores.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-list-ul" style="line-height: 1;"></i> All Stores
+            </a>
+        </li>
+    </ul>
+</li>
+@endcan
+
 @can('access_user_management')
-    <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('roles*') || request()->routeIs('admin.stores*') ? 'c-show' : '' }}">
+    <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('roles*') ? 'c-show' : '' }}">
         <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
             <i class="c-sidebar-nav-icon bi bi-people" style="line-height: 1;"></i> User Management
         </a>
         <ul class="c-sidebar-nav-dropdown-items">
-            <li class="c-sidebar-nav-item">
+            <!-- <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('admin.dashboard') ? 'c-active' : '' }}" href="{{ route('admin.dashboard') }}">
                     <i class="c-sidebar-nav-icon bi bi-speedometer2" style="line-height: 1;"></i> Admin Dashboard
                 </a>
-            </li>
+            </li> -->
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('users.create') ? 'c-active' : '' }}" href="{{ route('users.create') }}">
                     <i class="c-sidebar-nav-icon bi bi-person-plus" style="line-height: 1;"></i> Create User
@@ -315,16 +359,18 @@
                     <i class="c-sidebar-nav-icon bi bi-person-lines-fill" style="line-height: 1;"></i> All Users
                 </a>
             </li>
-            <li class="c-sidebar-nav-item">
-                <a class="c-sidebar-nav-link {{ request()->routeIs('admin.stores*') ? 'c-active' : '' }}" href="{{ route('admin.stores.index') }}">
+            <!-- <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link {{ request()->routeIs('stores*') ? 'c-active' : '' }}" href="{{ route('stores.index') }}">
                     <i class="c-sidebar-nav-icon bi bi-shop" style="line-height: 1;"></i> Stores
                 </a>
-            </li>
+            </li> -->
+            @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Business Owner'))
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('admin.login-logs*') ? 'c-active' : '' }}" href="{{ route('admin.login-logs.index') }}">
                     <i class="c-sidebar-nav-icon bi bi-box-arrow-in-right" style="line-height: 1;"></i> Login Logs
                 </a>
             </li>
+            @endif
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link {{ request()->routeIs('roles*') ? 'c-active' : '' }}" href="{{ route('roles.index') }}">
                     <i class="c-sidebar-nav-icon bi bi-key" style="line-height: 1;"></i> Roles & Permissions
@@ -334,7 +380,7 @@
     </li>
 @endcan
 
-@can('access_currencies|access_settings')
+@canany(['access_currencies', 'access_settings', 'access_units'])
     <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('currencies*') || request()->routeIs('units*') ? 'c-show' : '' }}">
         <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
             <i class="c-sidebar-nav-icon bi bi-gear" style="line-height: 1;"></i> Settings
@@ -357,6 +403,15 @@
             </li>
         </ul>
         @endcan
+        @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin', 'Business Owner']))
+        <ul class="c-sidebar-nav-dropdown-items">
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link {{ request()->routeIs('admin.storage.*') ? 'c-active' : '' }}" href="{{ route('admin.storage.index') }}">
+                    <i class="c-sidebar-nav-icon bi bi-hdd-network" style="line-height: 1;"></i> Manage Storage
+                </a>
+            </li>
+        </ul>
+        @endif
         <!-- @can('access_settings')
         <ul class="c-sidebar-nav-dropdown-items">
             <li class="c-sidebar-nav-item">

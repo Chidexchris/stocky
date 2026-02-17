@@ -8,7 +8,7 @@ use App\Models\Concerns\ScopedByStore;
 
 class PurchaseReturn extends Model
 {
-    use HasFactory, ScopedByStore;
+    use HasFactory, ScopedByStore, \App\Models\Concerns\BelongsToBusiness;
 
     protected $guarded = [];
 

@@ -121,7 +121,7 @@
         </div>
     </div>
 
-    <input type="hidden" name="total_amount" value="{{ $total_with_shipping }}">
+    <input type="hidden" id="total_amount" name="total_amount" value="{{ $total_with_shipping }}">
 
     <div class="form-row">
         <div class="col-lg-4">

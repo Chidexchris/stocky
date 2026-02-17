@@ -53,6 +53,17 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="store_id">Select Store <span class="text-danger">*</span></label>
+                                        <select class="form-control" name="store_id" id="store_id" required>
+                                            <option value="" selected disabled>Select Store</option>
+                                            @foreach($stores as $store)
+                                                <option value="{{ $store->id }}" {{ (old('store_id') == $store->id) || (auth()->user()->store_id == $store->id) ? 'selected' : '' }}>{{ $store->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <livewire:product-cart :cartInstance="'quotation'"/>

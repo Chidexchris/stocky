@@ -41,6 +41,13 @@ class LoginController extends Controller
     }
 
     protected function authenticated(Request $request, $user) {
+        if ($user->hasRole('Super Admin')) {
+            Auth::logout();
+            return back()->withErrors([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
         if ($user->is_active != 1) {
             Auth::logout();
 

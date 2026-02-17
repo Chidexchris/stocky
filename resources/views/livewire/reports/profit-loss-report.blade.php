@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <form wire:submit="generateReport">
                         <div class="form-row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="form-group">
                                     <label>Start Date <span class="text-danger">*</span></label>
                                     <input wire:model="start_date" type="date" class="form-control" name="start_date">
@@ -14,11 +14,25 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="form-group">
                                     <label>End Date <span class="text-danger">*</span></label>
                                     <input wire:model="end_date" type="date" class="form-control" name="end_date">
                                     @error('end_date')
+                                    <span class="text-danger mt-1">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label>Select Store <span class="text-danger">*</span></label>
+                                    <select wire:model="store_id" class="form-control" name="store_id">
+                                        <option value="" selected disabled>Select Store</option>
+                                        @foreach($stores as $store)
+                                            <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('store_id')
                                     <span class="text-danger mt-1">{{ $message }}</span>
                                     @enderror
                                 </div>

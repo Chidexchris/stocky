@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Unit extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\BelongsToBusiness;
 
     protected $guarded = [];
 

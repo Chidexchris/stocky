@@ -32,7 +32,9 @@ class QuotationController extends Controller
 
         Cart::instance('quotation')->destroy();
 
-        return view('quotation::create');
+        $stores = Store::where('is_active', true)->get();
+
+        return view('quotation::create', compact('stores'));
     }
 
 
@@ -50,6 +52,7 @@ class QuotationController extends Controller
                 'note' => $request->note,
                 'tax_amount' => Cart::instance('quotation')->tax() * 100,
                 'discount_amount' => Cart::instance('quotation')->discount() * 100,
+                'store_id' => $request->store_id,
             ]);
 
             foreach (Cart::instance('quotation')->content() as $cart_item) {
@@ -114,7 +117,9 @@ class QuotationController extends Controller
             ]);
         }
 
-        return view('quotation::edit', compact('quotation'));
+        $stores = Store::where('is_active', true)->get();
+
+        return view('quotation::edit', compact('quotation', 'stores'));
     }
 
 
@@ -137,6 +142,7 @@ class QuotationController extends Controller
                 'note' => $request->note,
                 'tax_amount' => Cart::instance('quotation')->tax() * 100,
                 'discount_amount' => Cart::instance('quotation')->discount() * 100,
+                'store_id' => $request->store_id,
             ]);
 
             foreach (Cart::instance('quotation')->content() as $cart_item) {

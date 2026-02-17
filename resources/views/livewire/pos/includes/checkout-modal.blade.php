@@ -25,6 +25,7 @@
                     <div class="row">
                         <div class="col-lg-7">
                             <input type="hidden" value="{{ $customer_id }}" name="customer_id">
+                            <input type="hidden" value="{{ $store_id }}" name="store_id">
                             <input type="hidden" value="{{ $global_tax }}" name="tax_percentage">
                             <input type="hidden" value="{{ $global_discount }}" name="discount_percentage">
                             <input type="hidden" value="{{ $shipping }}" name="shipping_amount">
@@ -37,24 +38,43 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="paid_amount">Received Amount <span class="text-danger">*</span></label>
-                                        <input id="paid_amount" type="text" class="form-control" name="paid_amount" value="{{ Cart::instance($cart_instance)->total() + (float) $shipping }}" required>
+                                        <label for="paid_amount">Total Received <span class="text-danger">*</span> <span id="payment-status-badge"></span></label>
+                                        <input id="paid_amount" type="text" class="form-control" name="paid_amount" value="{{ Cart::instance($cart_instance)->total() + (float) $shipping }}" readonly required>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="payment_method">Payment Method <span class="text-danger">*</span></label>
-                                <select class="form-control" name="payment_method" id="payment_method" required>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Credit Card">Credit Card</option>
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                    <option value="Cheque">Cheque</option>
-                                    <option value="Other">Other</option>
-                                </select>
+
+                            <div id="payment-rows" wire:ignore>
+                                <label class="font-weight-bold">Payment Methods <span class="text-danger">*</span></label>
+                                <div class="payment-row row no-gutters mb-2 align-items-end">
+                                    <div class="col-md-6 pr-1">
+                                        <select class="form-control payment-method" name="payments[0][method]" required>
+                                            <option value="Cash">Cash</option>
+                                            <option value="Credit Card">Credit Card</option>
+                                            <option value="Bank Transfer">Bank Transfer</option>
+                                            <option value="Cheque">Cheque</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-5 pr-1">
+                                        <input type="text" class="form-control payment-amount" name="payments[0][amount]" value="{{ Cart::instance($cart_instance)->total() + (float) $shipping }}" required>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-danger btn-block remove-payment" disabled>
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
+                            <div class="text-center">
+                                <button type="button" id="add-payment-row" class="btn btn-outline-primary btn-sm mt-2 mb-3">
+                                    <i class="bi bi-plus-circle"></i> Add Payment Method
+                                </button>
+                            </div>
+
                             <div class="form-group">
                                 <label for="note">Note (If Needed)</label>
-                                <textarea name="note" id="note" rows="5" class="form-control"></textarea>
+                                <textarea name="note" id="note" rows="2" class="form-control" placeholder="Add a note..."></textarea>
                             </div>
                         </div>
                         <div class="col-lg-5">
@@ -97,8 +117,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary shadow-sm"><i class="bi bi-check-circle"></i> Confirm Transaction</button>
                 </div>
             </form>
         </div>

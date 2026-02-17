@@ -34,11 +34,14 @@ class HomeController extends Controller
         $revenue = ($sales - $sale_returns) / 100;
         $profit = $revenue - $product_costs;
 
+        $has_sales = Sale::completed()->exists();
+
         return view('home', [
             'revenue'          => $revenue,
             'sale_returns'     => $sale_returns / 100,
             'purchase_returns' => $purchase_returns / 100,
-            'profit'           => $profit
+            'profit'           => $profit,
+            'has_sales'        => $has_sales
         ]);
     }
 
@@ -70,7 +73,10 @@ class HomeController extends Controller
         $sales = $this->salesChartData();
         $purchases = $this->purchasesChartData();
 
-        return response()->json(['sales' => $sales, 'purchases' => $purchases]);
+        return response()->json([
+            'sales' => $sales,
+            'purchases' => $purchases
+        ]);
     }
 
 
@@ -179,7 +185,7 @@ class HomeController extends Controller
             $days[] = $key;
         }
 
-        return response()->json(['data' => $data, 'days' => $days]);
+        return ['data' => $data, 'days' => $days];
     }
 
 
@@ -211,7 +217,6 @@ class HomeController extends Controller
             $days[] = $key;
         }
 
-        return response()->json(['data' => $data, 'days' => $days]);
-
+        return ['data' => $data, 'days' => $days];
     }
 }

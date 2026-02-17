@@ -36,7 +36,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="form-group">
                                     <label>Status</label>
                                     <select wire:model="sale_return_status" class="form-control" name="sale_return_status">
@@ -47,7 +47,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="form-group">
                                     <label>Payment Status</label>
                                     <select wire:model="payment_status" class="form-control" name="payment_status">
@@ -56,6 +56,20 @@
                                         <option value="Unpaid">Unpaid</option>
                                         <option value="Partial">Partial</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label>Select Store <span class="text-danger">*</span></label>
+                                    <select wire:model="store_id" class="form-control" name="store_id">
+                                        <option value="" selected disabled>Select Store</option>
+                                        @foreach($stores as $store)
+                                            <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('store_id')
+                                    <span class="text-danger mt-1">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

@@ -10,7 +10,8 @@ class Checkout extends Component
 
     protected $listeners = [
         'productSelected' => 'productSelected',
-        'discountModalRefresh' => 'discountModalRefresh'
+        'discountModalRefresh' => 'discountModalRefresh',
+        'updateStoreId' => 'setStoreId'
     ];
 
     public $cart_instance;
@@ -25,6 +26,7 @@ class Checkout extends Component
     public $data;
     public $customer_id;
     public $total_amount;
+    public $store_id;
 
     public function mount($cartInstance, $customers) {
         $this->cart_instance = $cartInstance;
@@ -37,6 +39,14 @@ class Checkout extends Component
         $this->discount_type = [];
         $this->item_discount = [];
         $this->total_amount = 0;
+
+        if (auth()->check() && !auth()->user()->hasRole('Super Admin')) {
+            $this->store_id = auth()->user()->store_id;
+        }
+    }
+
+    public function setStoreId($storeId) {
+        $this->store_id = $storeId;
     }
 
     public function hydrate() {

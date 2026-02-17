@@ -22,6 +22,15 @@
                         <label for="category_name">Category Name <span class="text-danger">*</span></label>
                         <input class="form-control" type="text" name="category_name" required>
                     </div>
+                    <div class="form-group">
+                        <label for="store_id">Store <span class="text-danger">*</span></label>
+                        <select class="form-control" name="store_id" id="store_id" required>
+                            <option value="" selected disabled>Select Store</option>
+                            @foreach($stores as $store)
+                                <option value="{{ $store->id }}">{{ $store->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Create <i class="bi bi-check"></i></button>

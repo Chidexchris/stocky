@@ -94,51 +94,31 @@
                                     <i class="bi bi-building"></i>
                                 </span>
                             </div>
-                            <input type="text" class="form-control"
+                            <input type="text" class="form-control @error('company_name') is-invalid @enderror"
                                    name="company_name" value="{{ old('company_name') }}"
-                                   placeholder="Company name">
+                                   placeholder="Business Name" required>
+                            @error('company_name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="input-group mb-3">
+
+                        <div class="input-group mb-4">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
-                                    <i class="bi bi-telephone"></i>
+                                    <i class="bi bi-award"></i>
                                 </span>
                             </div>
-                            <input type="text" class="form-control"
-                                   name="phone" value="{{ old('phone') }}"
-                                   placeholder="Phone number">
-                        </div>
-                        <div class="form-row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <select class="form-control" name="company_size">
-                                        <option value="">Company Size</option>
-                                        <option value="1-10">1-10</option>
-                                        <option value="11-50">11-50</option>
-                                        <option value="51-200">51-200</option>
-                                        <option value="200+">200+</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <select class="form-control" name="help_topic">
-                                        <option value="">What can we help you with today?</option>
-                                        <option value="sales">Sales</option>
-                                        <option value="support">Support</option>
-                                        <option value="billing">Billing</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control" name="referral_source">
-                                <option value="">How did you hear about us?</option>
-                                <option value="search">Search</option>
-                                <option value="social">Social</option>
-                                <option value="friend">Friend</option>
-                                <option value="other">Other</option>
+                            <select class="form-control @error('plan_id') is-invalid @enderror" name="plan_id" required>
+                                <option value="">Select Subscription Plan</option>
+                                @foreach($plans as $plan)
+                                    <option value="{{ $plan->id }}" {{ old('plan_id') == $plan->id ? 'selected' : '' }}>
+                                        {{ $plan->name }} - ${{ number_format($plan->price / 100, 2) }}/month
+                                    </option>
+                                @endforeach
                             </select>
+                            @error('plan_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <button type="submit" class="btn btn-primary btn-block btn-flat mb-3">Register</button>
                         <a href="{{ route('login') }}" class="text-center">I already have a membership.</a>

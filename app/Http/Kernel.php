@@ -39,6 +39,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\EnsureUserIsActive::class,
             \App\Http\Middleware\EnsureStoreAssigned::class,
+            \App\Http\Middleware\CheckSubscription::class,
         ],
 
         'api' => [
@@ -68,5 +69,7 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'roles_or_permissions' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'subscribed' => \App\Http\Middleware\CheckSubscription::class,
+        'superadmin.ip' => \App\Http\Middleware\SuperAdminIpWhitelist::class,
     ];
 }

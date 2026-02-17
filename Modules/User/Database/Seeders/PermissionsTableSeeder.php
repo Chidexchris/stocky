@@ -26,6 +26,7 @@ class PermissionsTableSeeder extends Seeder
             'show_weekly_sales_purchases',
             'show_monthly_cashflow',
             'show_notifications',
+            'access_login_logs',
             //Products
             'access_products',
             'create_products',
@@ -114,21 +115,27 @@ class PermissionsTableSeeder extends Seeder
             'delete_currencies',
             //Settings
             'access_settings',
+            //Transfers
+            'access_transfers',
+            'create_transfers',
+            'show_transfers',
+            'edit_transfers',
+            'delete_transfers',
             //Units
             'access_units'
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create([
+            Permission::firstOrCreate([
                 'name' => $permission
             ]);
         }
 
-        $role = Role::create([
+        $role = Role::firstOrCreate([
             'name' => 'Admin'
         ]);
 
         $role->givePermissionTo($permissions);
-        $role->revokePermissionTo('access_user_management');
+        // $role->revokePermissionTo('access_user_management');
     }
 }

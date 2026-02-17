@@ -17,6 +17,21 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Business Owner') || auth()->user()->hasRole('Admin'))
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="form-group mb-0">
+                                <label for="store_id">Select Store <span class="text-danger">*</span></label>
+                                <select class="form-control" name="store_id" id="store_id">
+                                    <option value="" selected>Select Store</option>
+                                    @foreach($stores as $store)
+                                        <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <livewire:search-product/>
             </div>
         </div>
@@ -33,3 +48,13 @@
         </div>
     </div>
 @endsection
+
+@push('page_scripts')
+    <script>
+        $(document).ready(function () {
+            $('#store_id').change(function () {
+                Livewire.dispatch('updateStoreId', { store_id: $(this).val() });
+            });
+        });
+    </script>
+@endpush

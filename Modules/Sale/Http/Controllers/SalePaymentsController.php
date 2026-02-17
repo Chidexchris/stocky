@@ -78,7 +78,7 @@ class SalePaymentsController extends Controller
             if ($sale->customer_id) {
                 $customer = Customer::findOrFail($sale->customer_id);
                 $debtor = Debtor::firstOrCreate(
-                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email, 'store_id' => $sale->store_id],
                     ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
                 );
                 $debtor->adjustBalance((int) round(-$request->amount * 100));
@@ -144,7 +144,7 @@ class SalePaymentsController extends Controller
             if ($sale->customer_id) {
                 $customer = Customer::findOrFail($sale->customer_id);
                 $debtor = Debtor::firstOrCreate(
-                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email, 'store_id' => $sale->store_id],
                     ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
                 );
                 $deltaCents = (int) round(($salePayment->amount - $request->amount) * 100);

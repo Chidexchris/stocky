@@ -6,6 +6,10 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.js"></script>
 <script defer src="{{ asset('vendor/datatables/buttons.server-side.js') }}"></script>
 
+<!-- Dexie.js for IndexedDB -->
+<script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+<script src="{{ asset('js/offline-db.js') }}"></script>
+
 @include('sweetalert::alert')
 
 @yield('third_party_scripts')

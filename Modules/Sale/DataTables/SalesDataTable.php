@@ -29,28 +29,11 @@ class SalesDataTable extends DataTable
             })
             ->addColumn('payment_status', function ($data) {
                 return view('sale::partials.payment-status', compact('data'));
-            })
-            ->addColumn('action', function ($data) {
-                return view('sale::partials.actions', compact('data'));
-            });
-    }
-
-    public function query(Sale $model) {
-        return $model->newQuery()
-            ->when(auth()->check() && auth()->user()->hasRole('Super Admin') && request()->filled('store_id'), function ($q) {
-                $q->where('store_id', request('store_id'));
-            });
-    }
-
-    public function html() {
-        return $this->builder()
-            ->setTableId('sales-table')
-            ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'B><'col-md-4'f>> .
                                 'tr' .
                                 <'row'<'col-md-5'i><'col-md-7 mt-2'p>>")
-            ->orderBy(8)
+            ->orderBy(9, 'desc')
             ->buttons(
                 Button::make('excel')
                     ->text('<i class="bi bi-file-earmark-excel-fill"></i> Excel'),

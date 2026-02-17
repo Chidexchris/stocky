@@ -30,4 +30,17 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'twilio' => [
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_TOKEN'),
+        'whatsapp_from' => env('TWILIO_WHATSAPP_FROM'),
+    ],
+
+    'opay' => [
+        'merchant_id' => env('OPAY_MERCHANT_ID'),
+        'public_key'  => env('OPAY_PUBLIC_KEY'),
+        'secret_key'  => env('OPAY_SECRET_KEY'),
+        'base_url'    => env('OPAY_BASE_URL', 'https://testapi.opaycheckout.com'),
+    ],
+
 ];

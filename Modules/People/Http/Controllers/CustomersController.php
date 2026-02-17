@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
 use Modules\People\Entities\Customer;
+use App\Models\Store;
 
 class CustomersController extends Controller
 {
@@ -22,7 +23,9 @@ class CustomersController extends Controller
     public function create() {
         abort_if(Gate::denies('create_customers'), 403);
 
-        return view('people::customers.create');
+        $stores = Store::where('is_active', true)->get();
+
+        return view('people::customers.create', compact('stores'));
     }
 
 
@@ -36,6 +39,7 @@ class CustomersController extends Controller
             'city'           => 'required|string|max:255',
             'country'        => 'required|string|max:255',
             'address'        => 'required|string|max:500',
+            'store_id'       => 'required'
         ]);
 
         Customer::create([
@@ -44,7 +48,8 @@ class CustomersController extends Controller
             'customer_email' => $request->customer_email,
             'city'           => $request->city,
             'country'        => $request->country,
-            'address'        => $request->address
+            'address'        => $request->address,
+            'store_id'       => $request->store_id
         ]);
 
         toast('Customer Created!', 'success');
@@ -63,7 +68,9 @@ class CustomersController extends Controller
     public function edit(Customer $customer) {
         abort_if(Gate::denies('edit_customers'), 403);
 
-        return view('people::customers.edit', compact('customer'));
+        $stores = Store::where('is_active', true)->get();
+
+        return view('people::customers.edit', compact('customer', 'stores'));
     }
 
 
@@ -77,6 +84,7 @@ class CustomersController extends Controller
             'city'           => 'required|string|max:255',
             'country'        => 'required|string|max:255',
             'address'        => 'required|string|max:500',
+            'store_id'       => 'required'
         ]);
 
         $customer->update([
@@ -85,7 +93,8 @@ class CustomersController extends Controller
             'customer_email' => $request->customer_email,
             'city'           => $request->city,
             'country'        => $request->country,
-            'address'        => $request->address
+            'address'        => $request->address,
+            'store_id'       => $request->store_id
         ]);
 
         toast('Customer Updated!', 'info');

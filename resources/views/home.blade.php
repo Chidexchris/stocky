@@ -70,9 +70,9 @@
         </div>
         @endcan
 
-        @can('show_weekly_sales_purchases|show_month_overview')
+        @if($has_sales)
+        @if(auth()->user()->can('show_weekly_sales_purchases') || auth()->user()->can('show_month_overview') || auth()->user()->hasRole('Business Owner'))
         <div class="row mb-4">
-            @can('show_weekly_sales_purchases')
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header">
@@ -83,8 +83,6 @@
                     </div>
                 </div>
             </div>
-            @endcan
-            @can('show_month_overview')
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header">
@@ -97,10 +95,11 @@
                     </div>
                 </div>
             </div>
-            @endcan
         </div>
-        @endcan
+        @endif
+        @endif
 
+        @if($has_sales)
         @can('show_monthly_cashflow')
         <div class="row">
             <div class="col-lg-12">
@@ -115,6 +114,7 @@
             </div>
         </div>
         @endcan
+        @endif
     </div>
 @endsection
 
@@ -125,5 +125,94 @@
 @endsection
 
 @push('page_scripts')
-    <script defer src="{{ mix('js/chart-config.js') }}"></script>
+    {{-- <script defer src="{{ mix('js/chart-config.js') }}"></script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // New Chart Implementation (Hard Request)
+            let salesPurchasesBar = document.getElementById('salesPurchasesChart');
+            if (salesPurchasesBar) {
+                $.get('/sales-purchases/chart-data', function (response) {
+                    // response is now { sales: {data:[], days:[]}, purchases: {data:[], days:[]} }
+                    console.log("Chart Data Loaded:", response);
+                    
+                    let salesPurchasesChart = new Chart(salesPurchasesBar, {
+                        type: 'bar',
+                        data: {
+                            labels: response.sales.days,
+                            datasets: [{
+                                label: 'Sales',
+                                data: response.sales.data,
+                                backgroundColor: ['#6366F1'],
+                                borderColor: ['#6366F1'],
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Purchases',
+                                data: response.purchases.data,
+                                backgroundColor: ['#A5B4FC'],
+                                borderColor: ['#A5B4FC'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error("Chart Request Failed:", textStatus, errorThrown);
+                });
+            }
+
+            // Restore other charts if needed, using old logic or similar new logic
+            // For now, focusing on the main requested chart: Sales & Purchases
+             let overviewChart = document.getElementById('currentMonthChart');
+             if (overviewChart) {
+                $.get('/current-month/chart-data', function (response) {
+                    new Chart(overviewChart, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Sales', 'Purchases', 'Expenses'],
+                            datasets: [{
+                                data: [response.sales, response.purchases, response.expenses],
+                                backgroundColor: ['#F59E0B', '#0284C7', '#EF4444'],
+                                hoverBackgroundColor: ['#F59E0B', '#0284C7', '#EF4444'],
+                            }]
+                        },
+                    });
+                });
+             }
+
+             let paymentChart = document.getElementById('paymentChart');
+             if(paymentChart) {
+                $.get('/payment-flow/chart-data', function (response) {
+                    new Chart(paymentChart, {
+                        type: 'line',
+                        data: {
+                            labels: response.months,
+                            datasets: [
+                                {
+                                    label: 'Payment Sent',
+                                    data: response.payment_sent,
+                                    fill: false,
+                                    borderColor: '#EA580C',
+                                    tension: 0
+                                },
+                                {
+                                    label: 'Payment Received',
+                                    data: response.payment_received,
+                                    fill: false,
+                                    borderColor: '#2563EB',
+                                    tension: 0
+                                },
+                            ]
+                        },
+                    });
+                });
+             }
+        });
+    </script>
 @endpush

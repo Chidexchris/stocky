@@ -25,6 +25,29 @@
 
                         <hr>
 
+                        @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin'))
+                            <div class="form-row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="storeFilter">Filter by Store</label>
+                                        <select id="storeFilter" class="form-control">
+                                            <option value="">All Stores</option>
+                                            @php
+                                                $stores = \App\Models\Store::where('is_active', true);
+                                                if (!auth()->user()->hasRole('Super Admin')) {
+                                                    $stores->where('business_id', auth()->user()->business_id);
+                                                }
+                                                $stores = $stores->get();
+                                            @endphp
+                                            @foreach($stores as $store)
+                                                <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="table-responsive">
                             {!! $dataTable->table() !!}
                         </div>
@@ -37,7 +60,7 @@
 
 @push('page_scripts')
     {!! $dataTable->scripts() !!}
-    @if(auth()->user()->hasRole('Super Admin'))
+    @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin'))
     <script>
         $(function() {
             var tableId = "product-table";

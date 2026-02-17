@@ -15,21 +15,32 @@ class CategoriesController extends Controller
     public function index(ProductCategoriesDataTable $dataTable) {
         abort_if(Gate::denies('access_product_categories'), 403);
 
-        return $dataTable->render('product::categories.index');
+        $stores = \App\Models\Store::where('is_active', true)->get();
+
+        return $dataTable->render('product::categories.index', compact('stores'));
     }
 
 
     public function store(Request $request) {
         abort_if(Gate::denies('access_product_categories'), 403);
 
-        $request->validate([
-            'category_code' => 'required|unique:categories,category_code',
-            'category_name' => 'required'
+        $validated = $request->validate([
+            'category_code' => ['required', \Illuminate\Validation\Rule::unique('categories')->where(function ($query) use ($request) {
+                return $query->where('store_id', $request->store_id);
+            })],
+            'category_name' => 'required',
+            'store_id'      => 'required|numeric'
         ]);
+
+        $store = \App\Models\Store::when(!auth()->user()->hasRole('Super Admin'), function ($query) {
+            return $query->where('business_id', auth()->user()->business_id);
+        })->findOrFail($request->store_id);
 
         Category::create([
             'category_code' => $request->category_code,
             'category_name' => $request->category_name,
+            'store_id'      => $store->id,
+            'business_id'   => $store->business_id
         ]);
 
         toast('Product Category Created!', 'success');
@@ -42,8 +53,9 @@ class CategoriesController extends Controller
         abort_if(Gate::denies('access_product_categories'), 403);
 
         $category = Category::findOrFail($id);
+        $stores = \App\Models\Store::where('is_active', true)->get();
 
-        return view('product::categories.edit', compact('category'));
+        return view('product::categories.edit', compact('category', 'stores'));
     }
 
 
@@ -51,13 +63,17 @@ class CategoriesController extends Controller
         abort_if(Gate::denies('access_product_categories'), 403);
 
         $request->validate([
-            'category_code' => 'required|unique:categories,category_code,' . $id,
-            'category_name' => 'required'
+            'category_code' => ['required', \Illuminate\Validation\Rule::unique('categories')->ignore($id)->where(function ($query) use ($request) {
+                return $query->where('store_id', $request->store_id);
+            })],
+            'category_name' => 'required',
+            'store_id'      => 'required|numeric'
         ]);
 
         Category::findOrFail($id)->update([
             'category_code' => $request->category_code,
             'category_name' => $request->category_name,
+            'store_id'      => $request->store_id,
         ]);
 
         toast('Product Category Updated!', 'info');

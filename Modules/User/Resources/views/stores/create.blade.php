@@ -5,14 +5,14 @@
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.stores.index') }}">Stores</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('stores.index') }}">Stores</a></li>
         <li class="breadcrumb-item active">Add</li>
     </ol>
 @endsection
 
 @section('content')
     <div class="container-fluid">
-        <form action="{{ route('admin.stores.store') }}" method="POST">
+        <form action="{{ route('stores.store') }}" method="POST">
             @csrf
             <div class="row">
                 <div class="col-lg-12">

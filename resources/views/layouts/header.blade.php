@@ -6,6 +6,8 @@
     <i class="bi bi-list" style="font-size: 2rem;"></i>
 </button>
 
+@include('layouts.includes.trial-banner')
+
 <ul class="c-header-nav ml-auto">
 
 </ul>

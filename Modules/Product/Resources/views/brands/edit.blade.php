@@ -22,6 +22,14 @@
                             @csrf
                             @method('patch')
                             <div class="form-group">
+                                <label class="font-weight-bold" for="store_id">Store <span class="text-danger">*</span></label>
+                                <select class="form-control" name="store_id" id="store_id" required>
+                                    @foreach(\App\Models\Store::all() as $store)
+                                        <option value="{{ $store->id }}" {{ $brand->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label class="font-weight-bold" for="brand_code">Brand Code <span class="text-danger">*</span></label>
                                 <input class="form-control" type="text" name="brand_code" required value="{{ $brand->brand_code }}">
                             </div>

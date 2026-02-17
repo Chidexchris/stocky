@@ -30,6 +30,15 @@
                                 <input class="form-control" type="text" name="category_name" required value="{{ $category->category_name }}">
                             </div>
                             <div class="form-group">
+                                <label class="font-weight-bold" for="store_id">Store <span class="text-danger">*</span></label>
+                                <select class="form-control" name="store_id" id="store_id" required>
+                                    <option value="" selected disabled>Select Store</option>
+                                    @foreach($stores as $store)
+                                        <option value="{{ $store->id }}" {{ $category->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Update <i class="bi bi-check"></i></button>
                             </div>
                         </form>

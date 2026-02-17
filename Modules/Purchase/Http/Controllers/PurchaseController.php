@@ -33,12 +33,29 @@ class PurchaseController extends Controller
 
         Cart::instance('purchase')->destroy();
 
-        return view('purchase::create');
+        $stores = Store::where('is_active', true)->get();
+
+        return view('purchase::create', compact('stores'));
     }
 
 
     public function store(StorePurchaseRequest $request) {
         DB::transaction(function () use ($request) {
+            // Handle General Supplier for Starter Plan
+            if (!$request->has('supplier_id') && !auth()->user()->hasFeature('suppliers')) {
+                $defaultSupplier = Supplier::firstOrCreate(
+                    ['supplier_name' => 'General Supplier', 'business_id' => auth()->user()->business_id],
+                    [
+                        'supplier_email' => 'general@example.com',
+                        'supplier_phone' => '0000000000',
+                        'city' => 'N/A',
+                        'country' => 'N/A',
+                        'address' => 'N/A'
+                    ]
+                );
+                $request->merge(['supplier_id' => $defaultSupplier->id]);
+            }
+
             $due_amount = $request->total_amount - $request->paid_amount;
             if ($due_amount == $request->total_amount) {
                 $payment_status = 'Unpaid';
@@ -64,6 +81,7 @@ class PurchaseController extends Controller
                 'note' => $request->note,
                 'tax_amount' => Cart::instance('purchase')->tax() * 100,
                 'discount_amount' => Cart::instance('purchase')->discount() * 100,
+                'store_id' => $request->store_id,
             ]);
 
             foreach (Cart::instance('purchase')->content() as $cart_item) {
@@ -155,7 +173,9 @@ class PurchaseController extends Controller
             ]);
         }
 
-        return view('purchase::edit', compact('purchase'));
+        $stores = Store::where('is_active', true)->get();
+
+        return view('purchase::edit', compact('purchase', 'stores'));
     }
 
 
@@ -198,6 +218,7 @@ class PurchaseController extends Controller
                 'note' => $request->note,
                 'tax_amount' => Cart::instance('purchase')->tax() * 100,
                 'discount_amount' => Cart::instance('purchase')->discount() * 100,
+                'store_id' => $request->store_id,
             ]);
 
             foreach (Cart::instance('purchase')->content() as $cart_item) {

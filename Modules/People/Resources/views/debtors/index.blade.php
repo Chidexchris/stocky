@@ -15,7 +15,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        @if(auth()->user()->hasRole('Super Admin'))
+                        @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Business Owner') || auth()->user()->hasRole('Admin'))
                             <div class="row mb-3">
                                 <div class="col-md-3">
                                     <label for="storeFilter" class="form-label">Filter by Store</label>

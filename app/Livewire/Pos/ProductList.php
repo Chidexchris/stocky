@@ -14,16 +14,22 @@ class ProductList extends Component
 
     protected $listeners = [
         'selectedCategory' => 'categoryChanged',
-        'showCount'        => 'showCountChanged'
+        'showCount'        => 'showCountChanged',
+        'updateStoreId'    => 'setStoreId'
     ];
 
     public $categories;
     public $category_id;
     public $limit = 9;
+    public $store_id;
 
     public function mount($categories) {
         $this->categories = $categories;
         $this->category_id = '';
+        
+        if (auth()->check() && !auth()->user()->hasRole('Super Admin')) {
+            $this->store_id = auth()->user()->store_id;
+        }
     }
 
     public function render() {
@@ -31,8 +37,16 @@ class ProductList extends Component
             'products' => Product::when($this->category_id, function ($query) {
                 return $query->where('category_id', $this->category_id);
             })
+            ->when($this->store_id, function ($query) {
+                return $query->where('store_id', $this->store_id);
+            })
             ->paginate($this->limit)
         ]);
+    }
+
+    public function setStoreId($storeId) {
+        $this->store_id = $storeId;
+        $this->resetPage();
     }
 
     public function categoryChanged($category_id) {

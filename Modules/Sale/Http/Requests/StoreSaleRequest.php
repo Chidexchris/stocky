@@ -22,10 +22,13 @@ class StoreSaleRequest extends FormRequest
             'shipping_amount' => 'required|numeric',
             'total_amount' => 'required|numeric',
             'paid_amount' => 'required|numeric',
+            'payments' => 'nullable|array',
+            'payments.*.method' => 'required_with:payments|string',
+            'payments.*.amount' => 'required_with:payments|numeric',
             'status' => 'required|string|max:255',
             'payment_method' => 'required|string|max:255',
             'note' => 'nullable|string|max:1000',
-            'store_id' => 'nullable|numeric',
+            'store_id' => auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin') ? 'required|numeric|exists:stores,id' : 'nullable|numeric',
         ];
     }
 

@@ -16,6 +16,10 @@ use App\Notifications\AccountUnfrozenNotification;
 
 class UsersController extends Controller
 {
+    public function __construct() {
+        $this->middleware('subscribed:user_limit')->only(['create', 'store']);
+    }
+
     public function index(UsersDataTable $dataTable) {
         abort_if(Gate::denies('access_user_management'), 403);
 

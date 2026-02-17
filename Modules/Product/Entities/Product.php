@@ -13,7 +13,7 @@ use App\Models\Concerns\ScopedByStore;
 class Product extends Model implements HasMedia
 {
 
-    use HasFactory, InteractsWithMedia, ScopedByStore;
+    use HasFactory, InteractsWithMedia, ScopedByStore, \App\Models\Concerns\BelongsToBusiness;
 
     protected $guarded = [];
 

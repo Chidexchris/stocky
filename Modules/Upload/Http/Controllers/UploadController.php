@@ -13,6 +13,11 @@ class UploadController extends Controller
 {
 
     public function filepondUpload(Request $request) {
+        $user = auth()->user();
+        if (!$user->hasRole('Super Admin') && $user->business && $user->business->storageLimitReached()) {
+            return response()->json(['message' => 'Storage limit reached. Please upgrade.'], 403);
+        }
+
         $request->validate([
             'image' => 'required|image|mimes:png,jpeg,jpg'
         ]);
@@ -49,6 +54,11 @@ class UploadController extends Controller
 
 
     public function dropzoneUpload(Request $request) {
+        $user = auth()->user();
+        if (!$user->hasRole('Super Admin') && $user->business && $user->business->storageLimitReached()) {
+            return response()->json(['message' => 'Storage limit reached. Please upgrade.'], 403);
+        }
+
         $file = $request->file('file');
 
         $filename = now()->timestamp . '.' . trim($file->getClientOriginalExtension());

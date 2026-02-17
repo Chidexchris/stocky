@@ -30,6 +30,15 @@
                                 <textarea class="form-control" name="category_description" id="category_description" rows="5">{{ $expenseCategory->category_description }}</textarea>
                             </div>
                             <div class="form-group">
+                                <label for="store_id">Store <span class="text-danger">*</span></label>
+                                <select class="form-control" name="store_id" id="store_id" required>
+                                    <option value="" selected disabled>Select Store</option>
+                                    @foreach($stores as $store)
+                                        <option value="{{ $store->id }}" {{ $expenseCategory->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Update <i class="bi bi-check"></i></button>
                             </div>
                         </form>

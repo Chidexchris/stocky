@@ -40,14 +40,27 @@
                             </div>
 
                             <div class="form-row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="stores">Select Stores <span class="text-danger">*</span></label>
+                                        <select class="form-control select2" name="stores[]" id="stores" multiple required>
+                                            @foreach($stores as $store)
+                                                <option value="{{ $store->id }}" {{ (is_array(old('stores')) && in_array($store->id, old('stores'))) || (!old('stores') && auth()->user()->store_id == $store->id) ? 'selected' : '' }}>{{ $store->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="category_id">Category <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <select class="form-control" name="category_id" id="category_id" required>
                                                 <option value="" selected disabled>Select Category</option>
-                                                @foreach(\Modules\Product\Entities\Category::all() as $category)
-                                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                                @foreach(\Modules\Product\Entities\Category::with('store')->orderBy('category_name')->get() as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->category_name . (auth()->user()->hasRole('Super Admin') ? ' (' . $category->store->name . ')' : '') }}</option>
                                                 @endforeach
                                             </select>
                                             <div class="input-group-append d-flex">
@@ -177,11 +190,21 @@
     @include('product::includes.brand-modal')
 @endsection
 
+@section('third_party_stylesheets')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endsection
+
 @section('third_party_scripts')
     <script src="{{ asset('js/dropzone.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
 
 @push('page_scripts')
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
     <script>
         var uploadedDocumentMap = {}
         Dropzone.options.documentDropzone = {

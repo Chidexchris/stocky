@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\BelongsToBusiness;
 
     protected $guarded = [];
 

@@ -9,7 +9,7 @@ use App\Models\Concerns\ScopedByStore;
 
 class Expense extends Model
 {
-    use HasFactory, ScopedByStore;
+    use HasFactory, ScopedByStore, \App\Models\Concerns\BelongsToBusiness;
 
     protected $guarded = [];
 

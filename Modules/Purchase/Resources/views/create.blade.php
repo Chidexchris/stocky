@@ -36,12 +36,17 @@
                                 <div class="col-lg-4">
                                     <div class="from-group">
                                         <div class="form-group">
-                                            <label for="supplier_id">Supplier <span class="text-danger">*</span></label>
-                                            <select class="form-control" name="supplier_id" id="supplier_id" required>
-                                                @foreach(\Modules\People\Entities\Supplier::all() as $supplier)
-                                                    <option value="{{ $supplier->id }}">{{ $supplier->supplier_name }}</option>
-                                                @endforeach
-                                            </select>
+                                            @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasFeature('suppliers'))
+                                                <label for="supplier_id">Supplier <span class="text-danger">*</span></label>
+                                                <select class="form-control" name="supplier_id" id="supplier_id" required>
+                                                    @foreach(\Modules\People\Entities\Supplier::all() as $supplier)
+                                                        <option value="{{ $supplier->id }}">{{ $supplier->supplier_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <label>Supplier</label>
+                                                <input type="text" class="form-control" value="General Supplier (Auto-assigned)" readonly disabled>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -53,6 +58,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin'))
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="store_id">Store <span class="text-danger">*</span></label>
+                                            <select class="form-control" name="store_id" id="store_id" required>
+                                                <option value="" selected disabled>Select Store</option>
+                                                @foreach($stores as $store)
+                                                    <option value="{{ $store->id }}" {{ object_get(auth()->user(), 'store_id') == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             <livewire:product-cart :cartInstance="'purchase'"/>
@@ -128,6 +146,11 @@
 
             $('#getTotalAmount').click(function () {
                 $('#paid_amount').maskMoney('mask', {{ Cart::instance('purchase')->total() }});
+            });
+
+            $('#store_id').change(function() {
+                var storeId = $(this).val();
+                Livewire.dispatch('updateStoreId', { storeId: storeId });
             });
 
             $('#purchase-form').submit(function () {

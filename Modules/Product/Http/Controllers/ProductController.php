@@ -28,23 +28,61 @@ class ProductController extends Controller
     public function create() {
         abort_if(Gate::denies('create_products'), 403);
 
-        return view('product::products.create');
+        $stores = \App\Models\Store::where('is_active', true)->get();
+
+        return view('product::products.create', compact('stores'));
     }
 
 
     public function store(StoreProductRequest $request) {
-        $payload = array_merge($request->except('document'), [
-            'product_quantity' => 0
-        ]);
-        $product = Product::create($payload);
+        $stores = $request->input('stores', []);
+        
+        // Validate and scope all provided stores
+        $validStores = \App\Models\Store::whereIn('id', $stores)
+            ->when(!auth()->user()->hasRole('Super Admin'), function ($query) {
+                return $query->where('business_id', auth()->user()->business_id);
+            })
+            ->pluck('id')
+            ->toArray();
 
-        if ($request->has('document')) {
-            foreach ($request->input('document', []) as $file) {
-                $product->addMedia(Storage::path('temp/dropzone/' . $file))->toMediaCollection('images');
+        // If no valid stores found, fallback to user's assigned store if they are not an admin
+        if (empty($validStores) && !auth()->user()->hasRole('Super Admin')) {
+            $validStores = [auth()->user()->store_id];
+        }
+
+        foreach ($validStores as $storeId) {
+            $payload = array_merge($request->except(['document', 'stores']), [
+                'product_quantity' => 0,
+                'store_id' => $storeId,
+                'business_id' => auth()->user()->hasRole('Super Admin') ? (\App\Models\Store::find($storeId)->business_id ?? null) : auth()->user()->business_id
+            ]);
+            
+            // Check for uniqueness within store to prevent duplicates
+            // We use 'product_code' + 'store_id' unique index now, so we can check if it exists or let DB throw error.
+            // Better to check to avoid 500.
+            $exists = Product::where('store_id', $storeId)->where('product_code', $request->product_code)->exists();
+            if ($exists) {
+                continue; // Skip existing products in this store
+            }
+
+            $product = Product::create($payload);
+
+            if ($request->has('document')) {
+                // Pre-check storage limit
+                $business = auth()->user()->business;
+                if ($business && $business->storageLimitReached() && !auth()->user()->hasRole('Super Admin')) {
+                    toast('Storage limit reached. Product created without images.', 'warning');
+                } else {
+                    foreach ($request->input('document', []) as $file) {
+                        $product->addMedia(Storage::path('temp/dropzone/' . $file))
+                            ->preservingOriginal() // Important to preserve for next iteration
+                            ->toMediaCollection('images');
+                    }
+                }
             }
         }
 
-        toast('Product Created!', 'success');
+        toast('Products Created Successfully!', 'success');
 
         return redirect()->route('products.index');
     }

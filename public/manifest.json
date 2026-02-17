@@ -1,0 +1,22 @@
+{
+    "name": "DTRecord SaaS",
+    "short_name": "DTRecord",
+    "description": "Smart Inventory and POS System",
+    "start_url": "/home",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3c4b64",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/images/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

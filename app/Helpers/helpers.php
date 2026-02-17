@@ -18,9 +18,13 @@ if (!function_exists('format_currency')) {
 
         $settings = settings();
         $position = $settings->default_currency_position;
-        $symbol = $settings->currency->symbol;
-        $decimal_separator = $settings->currency->decimal_separator;
-        $thousand_separator = $settings->currency->thousand_separator;
+        
+        // Use a defensive approach for currency symbol to prevent "property on null" errors
+        $currency = $settings->currency ?? \Modules\Currency\Entities\Currency::withoutGlobalScope('business')->find($settings->default_currency_id);
+        
+        $symbol = $currency ? $currency->symbol : '$';
+        $decimal_separator = $currency ? $currency->decimal_separator : '.';
+        $thousand_separator = $currency ? $currency->thousand_separator : ',';
 
         if ($position == 'prefix') {
             $formatted_value = $symbol . number_format((float) $value, 2, $decimal_separator, $thousand_separator);
@@ -58,5 +62,18 @@ if (!function_exists('array_merge_numeric_values')) {
         }
 
         return $merged;
+    }
+}
+if (!function_exists('format_size')) {
+    function format_size($bytes, $precision = 2) {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }

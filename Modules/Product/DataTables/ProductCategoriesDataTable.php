@@ -21,7 +21,7 @@ class ProductCategoriesDataTable extends DataTable
     }
 
     public function query(Category $model) {
-        return $model->newQuery()->withCount('products');
+        return $model->newQuery()->withCount('products')->with('store');
     }
 
     public function html() {
@@ -32,7 +32,7 @@ class ProductCategoriesDataTable extends DataTable
             ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'B><'col-md-4'f>> .
                                 'tr' .
                                 <'row'<'col-md-5'i><'col-md-7 mt-2'p>>")
-            ->orderBy(4)
+            ->orderBy(4, 'desc')
             ->buttons(
                 Button::make('excel')
                     ->text('<i class="bi bi-file-earmark-excel-fill"></i> Excel'),
@@ -46,7 +46,7 @@ class ProductCategoriesDataTable extends DataTable
     }
 
     protected function getColumns() {
-        return [
+        $columns = [
             Column::make('category_code')
                 ->addClass('text-center'),
 
@@ -64,6 +64,16 @@ class ProductCategoriesDataTable extends DataTable
             Column::make('created_at')
                 ->visible(false)
         ];
+
+        if (auth()->user()->hasRole('Super Admin')) {
+            array_splice($columns, 2, 0, [
+                Column::make('store.name')
+                    ->title('Store')
+                    ->addClass('text-center')
+            ]);
+        }
+
+        return $columns;
     }
 
     protected function filename(): string {

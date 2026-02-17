@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
 use Modules\People\Entities\Supplier;
+use App\Models\Store;
 
 class SuppliersController extends Controller
 {
@@ -22,7 +23,9 @@ class SuppliersController extends Controller
     public function create() {
         abort_if(Gate::denies('create_suppliers'), 403);
 
-        return view('people::suppliers.create');
+        $stores = Store::where('is_active', true)->get();
+
+        return view('people::suppliers.create', compact('stores'));
     }
 
 
@@ -36,6 +39,7 @@ class SuppliersController extends Controller
             'city'           => 'required|string|max:255',
             'country'        => 'required|string|max:255',
             'address'        => 'required|string|max:500',
+            'store_id'       => 'required'
         ]);
 
         Supplier::create([
@@ -44,7 +48,8 @@ class SuppliersController extends Controller
             'supplier_email' => $request->supplier_email,
             'city'           => $request->city,
             'country'        => $request->country,
-            'address'        => $request->address
+            'address'        => $request->address,
+            'store_id'       => $request->store_id
         ]);
 
         toast('Supplier Created!', 'success');
@@ -63,7 +68,9 @@ class SuppliersController extends Controller
     public function edit(Supplier $supplier) {
         abort_if(Gate::denies('edit_suppliers'), 403);
 
-        return view('people::suppliers.edit', compact('supplier'));
+        $stores = Store::where('is_active', true)->get();
+
+        return view('people::suppliers.edit', compact('supplier', 'stores'));
     }
 
 
@@ -77,6 +84,7 @@ class SuppliersController extends Controller
             'city'           => 'required|string|max:255',
             'country'        => 'required|string|max:255',
             'address'        => 'required|string|max:500',
+            'store_id'       => 'required'
         ]);
 
         $supplier->update([
@@ -85,7 +93,8 @@ class SuppliersController extends Controller
             'supplier_email' => $request->supplier_email,
             'city'           => $request->city,
             'country'        => $request->country,
-            'address'        => $request->address
+            'address'        => $request->address,
+            'store_id'       => $request->store_id
         ]);
 
         toast('Supplier Updated!', 'info');

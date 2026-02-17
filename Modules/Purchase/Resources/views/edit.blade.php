@@ -53,6 +53,20 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin'))
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="store_id">Store <span class="text-danger">*</span></label>
+                                            <select class="form-control" name="store_id" id="store_id" required>
+                                                <option value="" disabled>Select Store</option>
+                                                @foreach($stores as $store)
+                                                    <option value="{{ $store->id }}" {{ $purchase->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             <livewire:product-cart :cartInstance="'purchase'" :data="$purchase"/>

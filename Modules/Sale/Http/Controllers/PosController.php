@@ -40,11 +40,28 @@ class PosController extends Controller
                 $payment_status = 'Paid';
             }
 
+            $user = auth()->user();
+            
+            // Validate and scope store_id
+            $store = \App\Models\Store::when(!$user->hasRole('Super Admin'), function ($query) use ($user) {
+                return $query->where('business_id', $user->business_id);
+            })->findOrFail($request->store_id);
+
+            // Validate and scope customer_id if provided
+            $customer = null;
+            if ($request->customer_id) {
+                $customer = Customer::when(!$user->hasRole('Super Admin'), function ($query) use ($user) {
+                    return $query->where('business_id', $user->business_id);
+                })->findOrFail($request->customer_id);
+            }
+
             $sale = Sale::create([
                 'date' => now()->format('Y-m-d'),
                 'reference' => 'PSL',
-                'customer_id' => $request->customer_id,
-                'customer_name' => $request->customer_id ? Customer::findOrFail($request->customer_id)->customer_name : 'Walk-in Customer',
+                'customer_id' => $customer ? $customer->id : null,
+                'customer_name' => $customer ? $customer->customer_name : 'Walk-in Customer',
+                'store_id' => $store->id,
+                'business_id' => $store->business_id, // Explicitly set
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount * 100,
@@ -82,7 +99,19 @@ class PosController extends Controller
 
             Cart::instance('sale')->destroy();
 
-            if ($sale->paid_amount > 0) {
+            if ($request->has('payments') && is_array($request->payments)) {
+                foreach ($request->payments as $payment) {
+                    if ($payment['amount'] > 0) {
+                        SalePayment::create([
+                            'date' => now()->format('Y-m-d'),
+                            'reference' => 'INV/'.$sale->reference,
+                            'amount' => $payment['amount'], // already unmasked in JS or handled as float
+                            'sale_id' => $sale->id,
+                            'payment_method' => $payment['method']
+                        ]);
+                    }
+                }
+            } elseif ($sale->paid_amount > 0) {
                 SalePayment::create([
                     'date' => now()->format('Y-m-d'),
                     'reference' => 'INV/'.$sale->reference,

@@ -20,8 +20,9 @@ class PaymentsReport extends Component
 
     public $start_date;
     public $end_date;
-    public $payments;
     public $payment_method;
+    public $stores;
+    public $store_id;
 
     protected $rules = [
         'start_date' => 'required|date|before:end_date',
@@ -35,6 +36,8 @@ class PaymentsReport extends Component
         $this->end_date = today()->format('Y-m-d');
         $this->payments = '';
         $this->query = null;
+        $this->stores = \App\Models\Store::where('is_active', true)->get();
+        $this->store_id = auth()->user()->store_id;
     }
 
     public function render() {
@@ -50,6 +53,14 @@ class PaymentsReport extends Component
                 })
                 ->when($this->payment_method, function ($query) {
                     return $query->where('payment_method', $this->payment_method);
+                })
+                ->when($this->store_id, function ($query) {
+                    // Check if the relation (sale, purchase, etc.) has store_id
+                    // Actually, the payments themselves usually don't have store_id, but their parent models do.
+                    // But in this system, maybe payments DO have store_id.
+                    // Let's check. If they don't, we need to filter by parent's store_id.
+                    // However, ScopedByStore is applied to many models.
+                    return $query->where('store_id', $this->store_id);
                 })
                 ->paginate(10) : collect()
         ]);

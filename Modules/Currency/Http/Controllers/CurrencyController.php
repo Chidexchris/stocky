@@ -22,12 +22,36 @@ class CurrencyController extends Controller
     public function create() {
         abort_if(Gate::denies('create_currencies'), 403);
 
+        // Check currency limit
+        $user = auth()->user();
+        if (!$user->hasRole('Super Admin')) {
+            $plan = $user->business->plan ?? null;
+            $limit = $plan->limit_currencies ?? 1;
+            if (Currency::count() >= $limit) {
+                return response()->view('upgrade-required', [
+                    'featureName' => "More Currencies (limit: {$limit})",
+                    'currentPlan' => $plan->name ?? 'Starter',
+                    'recommendedPlan' => ($plan->name ?? 'Starter') === 'Starter' ? 'Business' : 'Enterprise',
+                ], 403);
+            }
+        }
+
         return view('currency::create');
     }
 
 
     public function store(Request $request) {
         abort_if(Gate::denies('create_currencies'), 403);
+
+        // Enforce currency limit
+        $user = auth()->user();
+        if (!$user->hasRole('Super Admin')) {
+            $plan = $user->business->plan ?? null;
+            $limit = $plan->limit_currencies ?? 1;
+            if (Currency::count() >= $limit) {
+                return redirect()->back()->with('error', "Currency limit ({$limit}) reached for your {$plan->name} plan. Please upgrade.");
+            }
+        }
 
         $request->validate([
             'currency_name' => 'required|string|max:255',

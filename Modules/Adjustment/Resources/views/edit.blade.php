@@ -45,6 +45,20 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin'))
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="store_id">Store <span class="text-danger">*</span></label>
+                                            <select class="form-control" name="store_id" id="store_id" required>
+                                                <option value="" disabled>Select Store</option>
+                                                @foreach($stores as $store)
+                                                    <option value="{{ $store->id }}" {{ $adjustment->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                             <livewire:adjustment.product-table :adjustedProducts="$adjustment->adjustedProducts->toArray()"/>
                             <div class="form-group">

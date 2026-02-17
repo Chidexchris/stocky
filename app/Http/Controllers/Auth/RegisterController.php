@@ -42,6 +42,17 @@ class RegisterController extends Controller
     }
 
     /**
+     * Show the application registration form.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showRegistrationForm()
+    {
+        $plans = \App\Models\Plan::all();
+        return view('auth.register', compact('plans'));
+    }
+
+    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
@@ -53,6 +64,8 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'company_name' => ['required', 'string', 'max:255'],
+            'plan_id' => ['nullable', 'exists:plans,id'],
         ]);
     }
 
@@ -64,14 +77,26 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // 1. Create the Business
+        $business = \App\Models\Business::create([
+            'name' => $data['company_name'],
+            'email' => $data['email'],
+            'plan_id' => $data['plan_id'] ?? null,
+            'trial_ends_at' => $data['plan_id'] ? null : now()->addDays(7),
+            'is_active' => true,
+        ]);
+
+        // 2. Create the User linked to the Business (no store yet)
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'is_active' => 1
+            'is_active' => 1,
+            'business_id' => $business->id,
         ]);
 
-        $user->assignRole('Super Admin');
+        // 3. Assign Role (Owner/Admin for the new business)
+        $user->assignRole('Business Owner');
 
         return $user;
     }

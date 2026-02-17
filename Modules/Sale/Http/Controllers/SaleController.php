@@ -97,13 +97,25 @@ class SaleController extends Controller
             if ($due_amount > 0 && $request->customer_id) {
                 $customer = Customer::findOrFail($request->customer_id);
                 $debtor = Debtor::firstOrCreate(
-                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email, 'store_id' => $request->store_id],
                     ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
                 );
                 $debtor->adjustBalance((int) round($due_amount * 100));
             }
 
-            if ($sale->paid_amount > 0) {
+            if ($request->has('payments') && is_array($request->payments)) {
+                foreach ($request->payments as $payment) {
+                    if ($payment['amount'] > 0) {
+                        SalePayment::create([
+                            'date' => $request->date,
+                            'reference' => 'INV/'.$sale->reference,
+                            'amount' => $payment['amount'],
+                            'sale_id' => $sale->id,
+                            'payment_method' => $payment['method']
+                        ]);
+                    }
+                }
+            } elseif ($sale->paid_amount > 0) {
                 SalePayment::create([
                     'date' => $request->date,
                     'reference' => 'INV/'.$sale->reference,
@@ -233,7 +245,7 @@ class SaleController extends Controller
             if ($request->customer_id) {
                 $customer = Customer::findOrFail($request->customer_id);
                 $debtor = Debtor::firstOrCreate(
-                    ['name' => $customer->customer_name, 'email' => $customer->customer_email],
+                    ['name' => $customer->customer_name, 'email' => $customer->customer_email, 'store_id' => $sale->store_id],
                     ['amount_owed' => 0, 'due_date' => now()->addDays(30)]
                 );
                 $delta = (int) round(($due_amount * 100) - $oldDue);

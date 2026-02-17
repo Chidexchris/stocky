@@ -27,7 +27,9 @@ class AdjustmentController extends Controller
     public function create() {
         abort_if(Gate::denies('create_adjustments'), 403);
 
-        return view('adjustment::create');
+        $stores = Store::where('is_active', true)->get();
+
+        return view('adjustment::create', compact('stores'));
     }
 
 
@@ -40,13 +42,15 @@ class AdjustmentController extends Controller
             'note'        => 'nullable|string|max:1000',
             'product_ids' => 'required',
             'quantities'  => 'required',
-            'types'       => 'required'
+            'types'       => 'required',
+            'store_id'    => auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin') ? 'required|numeric|exists:stores,id' : 'nullable|numeric',
         ]);
 
         DB::transaction(function () use ($request) {
             $adjustment = Adjustment::create([
                 'date' => $request->date,
-                'note' => $request->note
+                'note' => $request->note,
+                'store_id' => $request->store_id
             ]);
 
             foreach ($request->product_ids as $key => $id) {
@@ -87,7 +91,9 @@ class AdjustmentController extends Controller
     public function edit(Adjustment $adjustment) {
         abort_if(Gate::denies('edit_adjustments'), 403);
 
-        return view('adjustment::edit', compact('adjustment'));
+        $stores = Store::where('is_active', true)->get();
+
+        return view('adjustment::edit', compact('adjustment', 'stores'));
     }
 
 
@@ -100,14 +106,16 @@ class AdjustmentController extends Controller
             'note'        => 'nullable|string|max:1000',
             'product_ids' => 'required',
             'quantities'  => 'required',
-            'types'       => 'required'
+            'types'       => 'required',
+            'store_id'    => auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin') ? 'required|numeric|exists:stores,id' : 'nullable|numeric',
         ]);
 
         DB::transaction(function () use ($request, $adjustment) {
             $adjustment->update([
                 'reference' => $request->reference,
                 'date'      => $request->date,
-                'note'      => $request->note
+                'note'      => $request->note,
+                'store_id'  => $request->store_id
             ]);
 
             foreach ($adjustment->adjustedProducts as $adjustedProduct) {

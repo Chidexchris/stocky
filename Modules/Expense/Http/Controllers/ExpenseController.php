@@ -25,7 +25,9 @@ class ExpenseController extends Controller
     public function create() {
         abort_if(Gate::denies('create_expenses'), 403);
 
-        return view('expense::expenses.create');
+        $stores = Store::where('is_active', true)->get();
+
+        return view('expense::expenses.create', compact('stores'));
     }
 
 
@@ -37,14 +39,17 @@ class ExpenseController extends Controller
             'reference' => 'required|string|max:255',
             'category_id' => 'required',
             'amount' => 'required|numeric|max:2147483647',
-            'details' => 'nullable|string|max:1000'
+            'details' => 'nullable|string|max:1000',
+            'store_id' => 'required'
         ]);
 
         Expense::create([
             'date' => $request->date,
+            'reference' => $request->reference,
             'category_id' => $request->category_id,
             'amount' => $request->amount,
-            'details' => $request->details
+            'details' => $request->details,
+            'store_id' => $request->store_id
         ]);
 
         toast('Expense Created!', 'success');
@@ -56,7 +61,9 @@ class ExpenseController extends Controller
     public function edit(Expense $expense) {
         abort_if(Gate::denies('edit_expenses'), 403);
 
-        return view('expense::expenses.edit', compact('expense'));
+        $stores = Store::where('is_active', true)->get();
+
+        return view('expense::expenses.edit', compact('expense', 'stores'));
     }
 
 
@@ -68,7 +75,8 @@ class ExpenseController extends Controller
             'reference' => 'required|string|max:255',
             'category_id' => 'required',
             'amount' => 'required|numeric|max:2147483647',
-            'details' => 'nullable|string|max:1000'
+            'details' => 'nullable|string|max:1000',
+            'store_id' => 'required'
         ]);
 
         $expense->update([
@@ -76,7 +84,8 @@ class ExpenseController extends Controller
             'reference' => $request->reference,
             'category_id' => $request->category_id,
             'amount' => $request->amount,
-            'details' => $request->details
+            'details' => $request->details,
+            'store_id' => $request->store_id
         ]);
 
         toast('Expense Updated!', 'info');

@@ -16,9 +16,9 @@ class SalesReturnReport extends Component
     public $customers;
     public $start_date;
     public $end_date;
-    public $customer_id;
-    public $sale_return_status;
     public $payment_status;
+    public $stores;
+    public $store_id;
 
     protected $rules = [
         'start_date' => 'required|date|before:end_date',
@@ -32,6 +32,8 @@ class SalesReturnReport extends Component
         $this->customer_id = '';
         $this->sale_return_status = '';
         $this->payment_status = '';
+        $this->stores = \App\Models\Store::where('is_active', true)->get();
+        $this->store_id = auth()->user()->store_id;
     }
 
     public function render() {
@@ -45,6 +47,9 @@ class SalesReturnReport extends Component
             })
             ->when($this->payment_status, function ($query) {
                 return $query->where('payment_status', $this->payment_status);
+            })
+            ->when($this->store_id, function ($query) {
+                return $query->where('store_id', $this->store_id);
             })
             ->orderBy('date', 'desc')->paginate(10);
 

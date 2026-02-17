@@ -16,10 +16,10 @@ Route::group(['middleware' => 'auth'], function () {
     //Customers
     Route::resource('customers', 'CustomersController');
     //Suppliers
-    Route::resource('suppliers', 'SuppliersController');
+    Route::resource('suppliers', 'SuppliersController')->middleware('subscribed:feature,suppliers');
     //Debtors
-    Route::resource('debtors', 'DebtorsController')->only(['index', 'show', 'update', 'destroy']);
+    Route::resource('debtors', 'DebtorsController')->only(['index', 'show', 'update', 'destroy'])->middleware('subscribed:feature,debtors');
     //Creditors
-    Route::resource('creditors', 'CreditorsController')->only(['index', 'show', 'update', 'destroy']);
+    Route::resource('creditors', 'CreditorsController')->only(['index', 'show', 'update', 'destroy'])->middleware('subscribed:feature,suppliers');
 
 });
